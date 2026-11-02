@@ -60,11 +60,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/logo.jpg", type: "image/jpeg" },
-      { url: "/favicon.ico" },
+      { url: "/logo.jpg?v=2", type: "image/jpeg" },
+      { url: "/favicon.ico?v=2" },
     ],
-    shortcut: "/logo.jpg",
-    apple: "/logo.jpg",
+    shortcut: "/logo.jpg?v=2",
+    apple: "/logo.jpg?v=2",
   },
 };
 
@@ -82,8 +82,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${manrope.variable} ${oswald.variable}`}>
       <head>
-        <link rel="icon" href="/logo.jpg" type="image/jpeg" />
-        <link rel="apple-touch-icon" href="/logo.jpg" />
+        <link rel="icon" href="/logo.jpg?v=2" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/logo.jpg?v=2" />
       </head>
       <body className="bg-brand-black text-brand-offwhite font-sans antialiased selection:bg-brand-offwhite selection:text-brand-black min-h-screen flex flex-col">
         {children}
