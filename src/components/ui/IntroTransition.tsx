@@ -10,16 +10,16 @@ export function IntroTransition() {
     // Travar scroll durante a transição de abertura
     document.body.style.overflow = "hidden";
 
-    // Fase 1: Revelação do emblema e preparação da abertura
+    // Fase 1: Revelação ágil do emblema e disparo da abertura
     const timer1 = setTimeout(() => {
       setStage("opening");
-    }, 1100);
+    }, 500);
 
-    // Fase 2: Conclusão da abertura das portas e liberação da interface
+    // Fase 2: Conclusão da abertura e liberação imediata da interface
     const timer2 = setTimeout(() => {
       setStage("completed");
       document.body.style.overflow = "";
-    }, 2400);
+    }, 1250);
 
     return () => {
       clearTimeout(timer1);
@@ -39,7 +39,7 @@ export function IntroTransition() {
     >
       {/* Porta Esquerda (Left Shutter Door) */}
       <div
-        className={`absolute top-0 left-0 w-1/2 h-full bg-[#080808] border-r border-[#222222] transition-transform duration-[1200ms] ease-[cubic-bezier(0.85,0,0.15,1)] pointer-events-auto ${
+        className={`absolute top-0 left-0 w-1/2 h-full bg-[#080808] border-r border-[#222222] transition-transform duration-[700ms] ease-[cubic-bezier(0.85,0,0.15,1)] pointer-events-auto ${
           isOpening ? "-translate-x-full" : "translate-x-0"
         }`}
       >
@@ -48,7 +48,7 @@ export function IntroTransition() {
 
       {/* Porta Direita (Right Shutter Door) */}
       <div
-        className={`absolute top-0 right-0 w-1/2 h-full bg-[#080808] border-l border-[#222222] transition-transform duration-[1200ms] ease-[cubic-bezier(0.85,0,0.15,1)] pointer-events-auto ${
+        className={`absolute top-0 right-0 w-1/2 h-full bg-[#080808] border-l border-[#222222] transition-transform duration-[700ms] ease-[cubic-bezier(0.85,0,0.15,1)] pointer-events-auto ${
           isOpening ? "translate-x-full" : "translate-x-0"
         }`}
       >
@@ -57,16 +57,16 @@ export function IntroTransition() {
 
       {/* Linha de Feixe de Luz Central (Fenda que se abre) */}
       <div
-        className={`absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-gradient-to-b from-transparent via-brand-silver to-transparent transition-opacity duration-500 pointer-events-none ${
+        className={`absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-gradient-to-b from-transparent via-brand-silver to-transparent transition-opacity duration-300 pointer-events-none ${
           isOpening ? "opacity-0 scale-y-125" : "opacity-80"
         }`}
       />
 
       {/* Emblema Central e Tipografia */}
       <div
-        className={`absolute inset-0 flex flex-col items-center justify-center z-10 transition-all duration-700 pointer-events-none ${
+        className={`absolute inset-0 flex flex-col items-center justify-center z-10 transition-all duration-400 pointer-events-none ${
           isOpening
-            ? "opacity-0 scale-110 filter blur-sm"
+            ? "opacity-0 scale-105 filter blur-sm"
             : "opacity-100 scale-100"
         }`}
       >
