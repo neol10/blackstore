@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-black: #0B0B0B;
+  --color-graphite: #242424;
+  --color-silver: #B9B9B4;
+  --color-offwhite: #F3F1EC;
+  --color-white: #FFFFFF;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  background-color: var(--color-black);
+  color: var(--color-offwhite);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Redução de movimento acessível */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0B0B;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #242424;
+  border-radius: 4px;
+  border: 2px solid #0B0B0B;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #383838;
+}
+
+/* Custom Selection */
+::selection {
+  background-color: #F3F1EC;
+  color: #0B0B0B;
+}
+
+/* Efeito de granulação editorial de fundo sutil */
+.bg-subtle-noise {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0);
+  background-size: 24px 24px;
+}
