@@ -54,7 +54,7 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
             <div className="col-span-4 flex flex-col gap-4">
               <div className="relative h-[180px] sm:h-[230px] overflow-hidden border border-brand-border/60">
                 <Image
-                  src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=600&q=80"
+                  src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80"
                   alt="Detalhe de vestuário esportivo urbano"
                   fill
                   sizes="(max-width: 1024px) 30vw, 20vw"

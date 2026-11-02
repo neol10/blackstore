@@ -11,6 +11,7 @@ import { AboutStore } from "@/components/home/AboutStore";
 import { StoreGallery } from "@/components/home/StoreGallery";
 import { ContactSection } from "@/components/home/ContactSection";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
+import { IntroTransition } from "@/components/ui/IntroTransition";
 import { productsData } from "@/data/products";
 import { ProductCategory } from "@/types";
 
@@ -20,6 +21,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-brand-black flex flex-col text-brand-offwhite">
+      {/* Transição Cinematográfica de Abertura / Porta de Boutique */}
+      <IntroTransition />
+
       {/* Top Header */}
       <Header />
 
