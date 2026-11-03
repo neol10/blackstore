@@ -26,6 +26,10 @@ export interface SiteConfig {
     };
     hoursNote: string;
   };
+  developer: {
+    name: string;
+    url: string;
+  };
 }
 
 export const siteConfig: SiteConfig = {
@@ -57,5 +61,9 @@ export const siteConfig: SiteConfig = {
       sunday: "09h às 12h",
     },
     hoursNote: "Horários preliminares baseados no atendimento da loja.",
+  },
+  developer: {
+    name: "NEWNEO",
+    url: "https://www.instagram.com/newneo/",
   },
 };

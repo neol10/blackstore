@@ -118,8 +118,25 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-14 pt-8 border-t border-brand-border/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-brand-muted uppercase tracking-wider">
+        <div className="mt-14 pt-8 border-t border-brand-border/40 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-brand-muted uppercase tracking-wider text-center md:text-left">
           <p>© {currentYear} BLACK STORE. Todos os direitos reservados.</p>
+
+          {/* Desenvolvido por NEWNEO */}
+          <a
+            href={siteConfig.developer.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Desenvolvido por NEWNEO - Abrir Instagram"
+            className="group inline-flex items-center gap-1.5 py-1 px-3 rounded-full border border-brand-border/50 hover:border-brand-silver/50 bg-brand-surface/70 transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-brand-silver"
+          >
+            <span className="text-[10px] tracking-widest text-brand-silver/70 group-hover:text-brand-silver transition-colors">
+              Desenvolvido por
+            </span>
+            <span className="font-display font-bold text-xs tracking-[0.25em] animate-glow-text group-hover:scale-105 transition-transform inline-block">
+              {siteConfig.developer.name}
+            </span>
+          </a>
+
           <p>Elegância em cada detalhe.</p>
         </div>
       </div>
