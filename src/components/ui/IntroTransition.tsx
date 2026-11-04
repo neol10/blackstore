@@ -4,71 +4,53 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 
 export function IntroTransition() {
-  const [stage, setStage] = useState<"loading" | "opening" | "completed">("loading");
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
-    // Travar scroll durante a transição de abertura
+    // Trava scroll apenas durante a execução da animação de entrada
     document.body.style.overflow = "hidden";
 
-    // Fase 1: Revelação ágil do emblema e disparo da abertura
-    const timer1 = setTimeout(() => {
-      setStage("opening");
-    }, 500);
-
-    // Fase 2: Conclusão da abertura e liberação imediata da interface
-    const timer2 = setTimeout(() => {
-      setStage("completed");
+    // Libera a página após o término exato da animação CSS nativa
+    const timer = setTimeout(() => {
+      setIsCompleted(true);
       document.body.style.overflow = "";
-    }, 1250);
+    }, 1150);
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
+      clearTimeout(timer);
       document.body.style.overflow = "";
     };
   }, []);
 
-  if (stage === "completed") return null;
-
-  const isOpening = stage === "opening";
+  if (isCompleted) return null;
 
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-50 pointer-events-none select-none overflow-hidden"
+      className="fixed inset-0 z-50 pointer-events-none select-none overflow-hidden h-screen h-[100dvh]"
     >
-      {/* Porta Esquerda (Left Shutter Door) */}
+      {/* Porta Esquerda (Left Shutter Door) com aceleração por GPU */}
       <div
-        className={`absolute top-0 left-0 w-1/2 h-full bg-[#080808] border-r border-[#222222] transition-transform duration-[700ms] ease-[cubic-bezier(0.85,0,0.15,1)] pointer-events-auto ${
-          isOpening ? "-translate-x-full" : "translate-x-0"
-        }`}
+        className="absolute top-0 left-0 w-1/2 h-full bg-[#080808] border-r border-[#222222] pointer-events-auto door-animate-left"
       >
         <div className="absolute inset-0 bg-radial-gradient from-transparent to-black/60" />
       </div>
 
-      {/* Porta Direita (Right Shutter Door) */}
+      {/* Porta Direita (Right Shutter Door) com aceleração por GPU */}
       <div
-        className={`absolute top-0 right-0 w-1/2 h-full bg-[#080808] border-l border-[#222222] transition-transform duration-[700ms] ease-[cubic-bezier(0.85,0,0.15,1)] pointer-events-auto ${
-          isOpening ? "translate-x-full" : "translate-x-0"
-        }`}
+        className="absolute top-0 right-0 w-1/2 h-full bg-[#080808] border-l border-[#222222] pointer-events-auto door-animate-right"
       >
         <div className="absolute inset-0 bg-radial-gradient from-transparent to-black/60" />
       </div>
 
       {/* Linha de Feixe de Luz Central (Fenda que se abre) */}
       <div
-        className={`absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-gradient-to-b from-transparent via-brand-silver to-transparent transition-opacity duration-300 pointer-events-none ${
-          isOpening ? "opacity-0 scale-y-125" : "opacity-80"
-        }`}
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-full bg-gradient-to-b from-transparent via-brand-silver to-transparent pointer-events-none door-animate-slit"
       />
 
       {/* Emblema Central e Tipografia */}
       <div
-        className={`absolute inset-0 flex flex-col items-center justify-center z-10 transition-all duration-400 pointer-events-none ${
-          isOpening
-            ? "opacity-0 scale-105 filter blur-sm"
-            : "opacity-100 scale-100"
-        }`}
+        className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none door-animate-emblem"
       >
         {/* Glow de fundo */}
         <div className="absolute w-64 h-64 bg-brand-silver/5 rounded-full blur-3xl animate-pulse" />
