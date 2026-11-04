@@ -9,23 +9,21 @@ export function Hero() {
   const containerRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
 
-  // Monitora preferências de acessibilidade
+  // Detecta se é desktop ou mobile para aplicar a experiência mais fluida
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-      setPrefersReducedMotion(mediaQuery.matches);
-
-      const handleChange = (e: MediaQueryListEvent) => {
-        setPrefersReducedMotion(e.matches);
+      const checkScreen = () => {
+        setIsDesktop(window.innerWidth >= 1024);
       };
-      mediaQuery.addEventListener("change", handleChange);
-      return () => mediaQuery.removeEventListener("change", handleChange);
+      checkScreen();
+      window.addEventListener("resize", checkScreen);
+      return () => window.removeEventListener("resize", checkScreen);
     }
   }, []);
 
-  // Monitora o progresso do scroll relativo à seção (0 = topo, 1 = fim da transição para produtos)
+  // Monitora o progresso do scroll com requestAnimationFrame a 60fps/120fps (sem travas ou lag)
   useEffect(() => {
     let animationFrameId: number;
 
@@ -37,8 +35,11 @@ export function Hero() {
         const totalScrollable = containerRef.current.offsetHeight - window.innerHeight;
 
         if (totalScrollable > 0) {
-          // Progresso de 0 no topo até 1 quando a seção seguinte chega na viewport
           const progress = Math.min(Math.max(-rect.top / totalScrollable, 0), 1);
+          setScrollProgress(progress);
+        } else {
+          // No mobile ou alturas menores, calcula com base na rolagem da viewport
+          const progress = Math.min(Math.max(window.scrollY / (window.innerHeight * 0.8), 0), 1);
           setScrollProgress(progress);
         }
       });
@@ -53,7 +54,7 @@ export function Hero() {
     };
   }, []);
 
-  // Performance: gerencia reprodução do vídeo
+  // Performance: pausa o vídeo quando fora da viewport para economizar bateria e GPU
   useEffect(() => {
     const videoEl = videoRef.current;
     if (!videoEl) return;
@@ -66,50 +67,60 @@ export function Hero() {
   }, [scrollProgress]);
 
   // =========================================================================
-  // TRANSIÇÃO TRANSCENDENTAL (Tamanho Normal -> Expansão Tela Cheia -> Fade Out)
+  // DINÂMICA CINEMATOGRÁFICA TRANSCENDENTAL
   // =========================================================================
-  // FASE 1: Expansão (0 -> 0.45): O vídeo parte do tamanho normal e se expande a 100% da tela
-  const expansionProgress = prefersReducedMotion ? 1 : Math.min(scrollProgress / 0.45, 1);
+  // Desktop: Expansão ágil e orgânica sem sensação de travamento (140vh)
+  // Mobile: Rolagem nativa ultra-fluida (100dvh)
+  const expansion = isDesktop ? Math.min(scrollProgress / 0.4, 1) : 1;
+  const fadeOut = isDesktop
+    ? scrollProgress <= 0.65
+      ? 1
+      : Math.max(1 - (scrollProgress - 0.65) / 0.35, 0)
+    : Math.max(1 - scrollProgress * 1.2, 0);
 
-  // FASE 2: Desaparecimento suave ao chegar nos produtos (0.75 -> 1.0)
-  const fadeOutProgress = prefersReducedMotion
-    ? Math.max(1 - scrollProgress * 1.5, 0)
-    : scrollProgress <= 0.7
-    ? 1
-    : Math.max(1 - (scrollProgress - 0.7) / 0.3, 0);
+  // Dimensões do vídeo no desktop: tamanho normal inicial -> expande para tela cheia
+  const desktopInset = isDesktop ? (1 - expansion) * 24 : 0; // pixels
+  const desktopRadius = isDesktop ? (1 - expansion) * 16 : 0; // border-radius
+  const borderOpacity = isDesktop ? (1 - expansion) * 0.25 : 0;
 
-  // Dimensões do vídeo: Começa em tamanho normal elegante e se expande até preencher toda a tela
-  const containerInset = prefersReducedMotion ? 0 : (1 - expansionProgress) * 28; // em pixels
-  const containerRadius = prefersReducedMotion ? 0 : (1 - expansionProgress) * 20; // border radius
-  const borderOpacity = prefersReducedMotion ? 0 : (1 - expansionProgress) * 0.35;
-
-  // Animação de texto e CTAs: Desaparecem suavemente quando o vídeo transcende para o fundo
-  const textOpacity = prefersReducedMotion ? 1 : Math.max(1 - scrollProgress * 2.8, 0);
-  const textTranslateY = prefersReducedMotion ? 0 : -scrollProgress * 60;
+  // Deslocamento e fade do texto
+  const textOpacity = isDesktop ? Math.max(1 - scrollProgress * 2.5, 0) : Math.max(1 - scrollProgress * 1.8, 0);
+  const textTranslateY = -scrollProgress * 40;
 
   return (
     <section
       ref={containerRef}
       id="inicio"
-      className="relative min-h-[190vh] bg-brand-black select-none"
+      className={`relative bg-brand-black select-none ${
+        isDesktop ? "min-h-[135vh]" : "min-h-[100dvh] flex flex-col justify-center pt-28 pb-12"
+      }`}
     >
-      {/* Container Sticky: Permanece fixo na viewport enquanto o usuário rola a seção */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
-
-        {/* 1. O VÍDEO CINEMATOGRÁFICO TRANSCENDENTAL (TAMANHO NORMAL -> FUNDO TELA CHEIA -> SOME) */}
+      {/* Container Sticky apenas no Desktop para evitar sensação de travamento no touch do celular */}
+      <div
+        className={`${
+          isDesktop
+            ? "sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center"
+            : "relative w-full h-full flex flex-col justify-center flex-1"
+        }`}
+      >
+        {/* 1. O VÍDEO CINEMATOGRÁFICO TRANSCENDENTAL (TAMANHO NORMAL -> FUNDO TELA CHEIA -> SOME NOS PRODUTOS) */}
         <div
-          className="absolute z-0 overflow-hidden shadow-2xl transition-[inset,border-radius] duration-150 ease-out will-change-[inset,border-radius,opacity]"
+          className={`${
+            isDesktop
+              ? "absolute z-0 overflow-hidden shadow-2xl will-change-transform"
+              : "absolute inset-0 z-0 overflow-hidden"
+          }`}
           style={{
-            top: `${containerInset}px`,
-            bottom: `${containerInset}px`,
-            left: `${containerInset}px`,
-            right: `${containerInset}px`,
-            borderRadius: `${containerRadius}px`,
-            border: `1px solid rgba(255, 255, 255, ${borderOpacity})`,
-            opacity: fadeOutProgress,
+            top: isDesktop ? `${desktopInset}px` : "0px",
+            bottom: isDesktop ? `${desktopInset}px` : "0px",
+            left: isDesktop ? `${desktopInset}px` : "0px",
+            right: isDesktop ? `${desktopInset}px` : "0px",
+            borderRadius: isDesktop ? `${desktopRadius}px` : "0px",
+            border: borderOpacity > 0 ? `1px solid rgba(255, 255, 255, ${borderOpacity})` : "none",
+            opacity: fadeOut,
           }}
         >
-          {/* Vídeo do Homem de Terno (Proporção natural preservada sem qualquer distorção) */}
+          {/* Vídeo do Homem de Terno (Proporção normal preservada sem distorção) */}
           <video
             ref={videoRef}
             autoPlay
@@ -118,42 +129,34 @@ export function Hero() {
             playsInline
             preload="metadata"
             poster="/media/hero-poster.jpg"
-            className="w-full h-full object-cover object-[center_20%] sm:object-[center_25%] filter brightness-[0.82] contrast-[1.08] transition-transform duration-300 ease-out"
-            style={{
-              transform: `scale(${1 + expansionProgress * 0.05})`,
-            }}
+            className="w-full h-full object-cover object-[center_20%] sm:object-[center_25%] filter brightness-[0.82] contrast-[1.08]"
           >
             <source src="/media/hero-banner.mp4" type="video/mp4" />
           </video>
 
           {/* Gradientes cinematográficos de iluminação e legibilidade de luxo */}
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-black/90 via-brand-black/40 to-brand-black/70 pointer-events-none" />
-          <div className="absolute inset-0 bg-radial-gradient from-transparent via-brand-black/20 to-brand-black/80 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-black/95 via-brand-black/45 to-brand-black/75 pointer-events-none" />
+          <div className="absolute inset-0 bg-radial-gradient from-transparent via-brand-black/20 to-brand-black/85 pointer-events-none" />
 
           {/* Fusão inferior para dissolver suavemente nos produtos */}
-          <div
-            className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-brand-black via-brand-black/80 to-transparent pointer-events-none"
-            style={{
-              opacity: 0.6 + scrollProgress * 0.4,
-            }}
-          />
+          <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-brand-black via-brand-black/70 to-transparent pointer-events-none" />
         </div>
 
         {/* 2. CONTEÚDO HERO (TEXTOS, CTAS E MICRO-INFORMATIVOS) */}
         <div
-          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto transition-transform duration-100 ease-out pointer-events-auto"
+          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto pointer-events-auto"
           style={{
             transform: `translate3d(0, ${textTranslateY}px, 0)`,
             opacity: textOpacity,
-            pointerEvents: textOpacity < 0.15 ? "none" : "auto",
+            pointerEvents: textOpacity < 0.1 ? "none" : "auto",
             willChange: "transform, opacity",
           }}
         >
           <div className="max-w-3xl">
             {/* Badge de Posicionamento */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-black/70 border border-brand-silver/30 backdrop-blur-xl mb-6 shadow-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-black/75 border border-brand-silver/30 backdrop-blur-xl mb-5 shadow-2xl">
               <Sparkles className="w-3.5 h-3.5 text-brand-white animate-pulse" />
-              <span className="text-[11px] font-medium tracking-widest text-brand-white uppercase">
+              <span className="text-[10px] sm:text-[11px] font-medium tracking-widest text-brand-white uppercase">
                 {siteConfig.demoMode
                   ? "Vitrine Conceito • Demonstração Comercial"
                   : "Moda Masculina • Coleções 2026"}
@@ -161,7 +164,7 @@ export function Hero() {
             </div>
 
             {/* Título Principal */}
-            <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.95] mb-6 drop-shadow-2xl">
+            <h1 className="font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-5 drop-shadow-2xl">
               <span className="text-white block drop-shadow-md">
                 Seu Estilo.
               </span>
@@ -171,16 +174,16 @@ export function Hero() {
             </h1>
 
             {/* Subtítulo */}
-            <p className="text-base sm:text-lg lg:text-xl text-brand-offwhite/90 max-w-xl font-normal leading-relaxed mb-10 drop-shadow-md">
+            <p className="text-sm sm:text-base lg:text-xl text-brand-offwhite/90 max-w-xl font-normal leading-relaxed mb-8 drop-shadow-md">
               Moda masculina para quem valoriza estilo, conforto e personalidade.
               Do casual à alfaiataria contemporânea e estética esportiva urbana.
             </p>
 
             {/* CTAs Interativos */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 relative z-30">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 relative z-30">
               <a
                 href="#colecoes"
-                className="inline-flex items-center justify-center px-8 py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-2xl focus:outline-none focus:ring-2 focus:ring-brand-silver"
+                className="inline-flex items-center justify-center px-7 py-3.5 sm:px-8 sm:py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-2xl focus:outline-none focus:ring-2 focus:ring-brand-silver"
               >
                 Explorar Coleções
               </a>
@@ -189,38 +192,40 @@ export function Hero() {
                 href={createWhatsAppLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-brand-black/75 backdrop-blur-xl text-brand-offwhite border border-brand-silver/30 text-xs font-semibold uppercase tracking-widest hover:border-brand-white hover:bg-brand-graphite hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-silver shadow-2xl"
+                className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 sm:px-8 sm:py-4 bg-brand-black/80 backdrop-blur-xl text-brand-offwhite border border-brand-silver/30 text-xs font-semibold uppercase tracking-widest hover:border-brand-white hover:bg-brand-graphite hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-silver shadow-2xl"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-400" />
                 Fale com a Black Store
               </a>
             </div>
 
-            {/* Micro informativos inferiores com separadores elegantes */}
-            <div className="grid grid-cols-3 gap-6 pt-10 mt-10 border-t border-brand-border/40 text-left">
+            {/* Micro informativos inferiores perfeitamente espaçados */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-6 pt-8 mt-8 border-t border-brand-border/40 text-left">
               <div>
-                <p className="text-xs uppercase tracking-widest text-brand-muted">Conceito</p>
-                <p className="text-sm font-semibold text-brand-white mt-1">Streetwear & Luxo</p>
+                <p className="text-[10px] sm:text-xs uppercase tracking-widest text-brand-muted">Conceito</p>
+                <p className="text-xs sm:text-sm font-semibold text-brand-white mt-1">Streetwear & Luxo</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-brand-muted">Variedade</p>
-                <p className="text-sm font-semibold text-brand-white mt-1">Casual a Esportivo</p>
+                <p className="text-[10px] sm:text-xs uppercase tracking-widest text-brand-muted">Variedade</p>
+                <p className="text-xs sm:text-sm font-semibold text-brand-white mt-1">Casual a Esportivo</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-brand-muted">Atendimento</p>
-                <p className="text-sm font-semibold text-brand-white mt-1">Exclusivo via WhatsApp</p>
+                <p className="text-[10px] sm:text-xs uppercase tracking-widest text-brand-muted">Atendimento</p>
+                <p className="text-xs sm:text-sm font-semibold text-brand-white mt-1">Via WhatsApp</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 3. Camada de Dissolução Preta para Entrega Perfeita aos Produtos */}
-        <div
-          className="absolute inset-0 bg-brand-black pointer-events-none z-20 transition-opacity duration-150 ease-out"
-          style={{
-            opacity: Math.max(0, (scrollProgress - 0.72) / 0.28),
-          }}
-        />
+        {/* 3. Camada de Dissolução para Entrega Fluida aos Produtos no Desktop */}
+        {isDesktop && (
+          <div
+            className="absolute inset-0 bg-brand-black pointer-events-none z-20"
+            style={{
+              opacity: Math.max(0, (scrollProgress - 0.7) / 0.3),
+            }}
+          />
+        )}
       </div>
     </section>
   );
