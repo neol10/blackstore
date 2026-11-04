@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { MessageCircle, ExternalLink } from "lucide-react";
 import { ProductItem } from "@/types";
@@ -8,13 +8,55 @@ import { createProductWhatsAppLink } from "@/lib/whatsapp";
 
 interface ProductCardProps {
   product: ProductItem;
+  index?: number;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const whatsappUrl = createProductWhatsAppLink(product.name);
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    // Se o navegador não suportar IntersectionObserver, exibe imediatamente
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          if (cardRef.current) {
+            observer.unobserve(cardRef.current);
+          }
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "0px 0px -40px 0px",
+      }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <article className="group flex flex-col bg-brand-card border border-brand-border/70 overflow-hidden transition-all duration-300 hover:border-brand-silver/50 hover:shadow-2xl">
+    <article
+      ref={cardRef}
+      style={{
+        transitionDelay: isVisible ? `${(index % 4) * 75}ms` : "0ms",
+      }}
+      className={`group flex flex-col bg-brand-card border border-brand-border/70 overflow-hidden transition-all duration-500 ease-out hover:border-brand-silver/50 hover:shadow-2xl ${
+        isVisible
+          ? "opacity-100 translate-y-0 scale-100"
+          : "opacity-0 translate-y-6 scale-[0.98]"
+      }`}
+    >
       {/* Product Image Container */}
       <div className="relative aspect-[3/4] w-full bg-brand-black overflow-hidden">
         <Image
