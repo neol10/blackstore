@@ -17,13 +17,13 @@ export function AboutStore() {
               </span>
             </div>
 
-            <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white leading-tight mb-6">
+            <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white leading-tight mb-6 text-balance">
               Mais Que Roupas.
               <br />
               <span className="text-brand-silver">Uma Questão de Estilo.</span>
             </h2>
 
-            <div className="space-y-4 text-brand-silver/90 text-sm sm:text-base leading-relaxed">
+            <div className="space-y-4 text-brand-silver/90 text-sm sm:text-base leading-relaxed text-pretty">
               <p>
                 Na Black Store, você encontra opções de moda masculina para diferentes momentos do seu dia. Do visual casual ao esportivo, nossa proposta é reunir variedade, estilo e praticidade em um só lugar.
               </p>
@@ -70,7 +70,7 @@ export function AboutStore() {
 
           {/* Visual Showcase */}
           <div className="lg:col-span-6 relative">
-            <div className="relative aspect-[4/5] sm:aspect-square w-full overflow-hidden border border-brand-border/80 shadow-2xl">
+            <div className="relative aspect-[4/5] sm:aspect-square w-full overflow-hidden border border-brand-border/80 shadow-2xl ring-1 ring-inset ring-white/10">
               <Image
                 src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=800&q=70"
                 alt="Ambiente de moda masculina e exposição de coleções"

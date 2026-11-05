@@ -51,10 +51,10 @@ export function ProductGrid({
               Vitrine Exclusiva
             </span>
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white mb-4">
+          <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white mb-4 text-balance">
             Destaques da Black Store.
           </h2>
-          <p className="text-brand-silver/90 text-sm sm:text-base font-normal">
+          <p className="text-brand-silver/90 text-sm sm:text-base font-normal text-pretty">
             Explore peças selecionadas para diferentes estilos e ocasiões. Consulte a disponibilidade do seu tamanho diretamente com nossa equipe.
           </p>
         </div>

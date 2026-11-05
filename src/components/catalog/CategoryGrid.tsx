@@ -34,11 +34,11 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
                 Categorias Principais
               </span>
             </div>
-            <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white">
+            <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white text-balance">
               Encontre Seu Estilo.
             </h2>
           </div>
-          <p className="text-brand-silver/80 max-w-md text-sm sm:text-base font-normal">
+          <p className="text-brand-silver/80 max-w-md text-sm sm:text-base font-normal text-pretty">
             Do casual ao esportivo, explore as coleções da Black Store projetadas para compor um guarda-roupa marcante.
           </p>
         </div>
@@ -50,7 +50,7 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
               key={cat.id}
               href={`#destaques`}
               onClick={(e) => handleCategoryClick(cat.targetFilter, e)}
-              className="group relative h-[380px] sm:h-[420px] overflow-hidden bg-brand-black border border-brand-border/80 flex flex-col justify-end p-6 sm:p-8 transition-[border-color,box-shadow,transform] duration-300 hover:border-brand-silver/60 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.85)] active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-brand-silver select-none"
+              className="group relative h-[380px] sm:h-[420px] overflow-hidden bg-brand-black border border-brand-border/80 flex flex-col justify-end p-6 sm:p-8 transition-[border-color,box-shadow,transform] duration-300 hover:border-brand-silver/60 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.85)] active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-brand-silver select-none ring-1 ring-inset ring-white/5"
             >
               {/* Image Background */}
               <div className="absolute inset-0 z-0">
@@ -71,22 +71,22 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
                   <span className="text-[10px] uppercase tracking-widest text-brand-silver/80 font-mono">
                     Coleção Black Store
                   </span>
-                  <div className="w-8 h-8 rounded-full bg-brand-black/60 border border-brand-border/60 flex items-center justify-center text-brand-silver group-hover:text-brand-black group-hover:border-brand-white group-hover:bg-brand-white transition-[background-color,color,border-color,transform] duration-300">
+                  <div className="w-8 h-8 rounded-full bg-brand-black/60 border border-brand-border/60 flex items-center justify-center text-brand-silver group-hover:text-brand-black group-hover:border-brand-white group-hover:bg-brand-white transition-[background-color,color,border-color,transform] duration-300 shadow-sm">
                     <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:rotate-45" />
                   </div>
                 </div>
 
-                <h3 className="font-display text-2xl font-bold uppercase tracking-wider text-brand-white mb-2">
+                <h3 className="font-display text-2xl font-bold uppercase tracking-wider text-brand-white mb-2 text-balance">
                   {cat.name}
                 </h3>
 
-                <p className="text-xs text-brand-silver/90 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-brand-silver/90 line-clamp-2 leading-relaxed text-pretty">
                   {cat.shortDescription}
                 </p>
 
                 <div className="mt-4 pt-3 border-t border-brand-border/40 flex items-center gap-1.5 text-[11px] uppercase tracking-widest text-brand-silver group-hover:text-brand-white">
                   <span>Ver na vitrine</span>
-                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                  <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
                 </div>
               </div>
             </a>

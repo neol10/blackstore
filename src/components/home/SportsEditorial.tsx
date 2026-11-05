@@ -87,11 +87,11 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
               </span>
             </div>
 
-            <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-brand-white leading-[1.02] mb-6">
+            <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-brand-white leading-[1.02] mb-6 text-balance">
               A Paixão Pelo Esporte Também Faz Parte do Seu Estilo.
             </h2>
 
-            <p className="text-brand-silver/90 text-sm sm:text-base leading-relaxed mb-6">
+            <p className="text-brand-silver/90 text-sm sm:text-base leading-relaxed mb-6 text-pretty">
               Explore a seleção esportiva da Black Store. Modelos com tecidos leves, respirabilidade e visual marcante para torcer, treinar ou compor looks urbanos cheios de personalidade.
             </p>
 
@@ -125,12 +125,12 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
               </div>
             </div>
 
-            {/* CTA */}
+            {/* CTA com alinhamento óptico no ícone */}
             <div>
               <a
                 href="#destaques"
                 onClick={handleGoToSports}
-                className="inline-flex items-center gap-3 px-8 py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-silver shadow-xl"
+                className="inline-flex items-center gap-2.5 pl-8 pr-7 py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver active:scale-[0.98] transition-[transform,background-color,color] duration-200 focus:outline-none focus:ring-2 focus:ring-brand-silver shadow-xl select-none"
               >
                 <span>Ver Coleção Esportiva</span>
                 <ArrowRight className="w-4 h-4" />

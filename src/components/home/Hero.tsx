@@ -114,8 +114,8 @@ export function Hero() {
             </span>
           </div>
 
-          {/* Título Principal */}
-          <h1 className="font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-4 sm:mb-6 drop-shadow-2xl">
+          {/* Título Principal com text-balance óptico */}
+          <h1 className="font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-4 sm:mb-6 drop-shadow-2xl text-balance">
             <span className="text-white block drop-shadow-md">
               Seu Estilo.
             </span>
@@ -124,17 +124,17 @@ export function Hero() {
             </span>
           </h1>
 
-          {/* Subtítulo */}
-          <p className="text-sm sm:text-base lg:text-xl text-brand-offwhite/90 max-w-xl font-normal leading-relaxed mb-6 sm:mb-10 drop-shadow-md">
+          {/* Subtítulo com text-pretty sem palavras órfãs */}
+          <p className="text-sm sm:text-base lg:text-xl text-brand-offwhite/90 max-w-xl font-normal leading-relaxed mb-6 sm:mb-10 drop-shadow-md text-pretty">
             Moda masculina para quem valoriza estilo, conforto e personalidade.
             Do casual à alfaiataria contemporânea e estética esportiva urbana.
           </p>
 
-          {/* Botões de Ação */}
+          {/* Botões de Ação com alinhamento óptico e resposta física tátil */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 relative z-30">
             <a
               href="#colecoes"
-              className="inline-flex items-center justify-center px-7 py-3.5 sm:px-8 sm:py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-2xl focus:outline-none focus:ring-2 focus:ring-brand-silver text-center"
+              className="inline-flex items-center justify-center px-7 py-3.5 sm:px-8 sm:py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver hover:scale-[1.02] active:scale-[0.98] transition-[transform,background-color,color] duration-200 shadow-2xl focus:outline-none focus:ring-2 focus:ring-brand-silver text-center select-none"
             >
               Explorar Coleções
             </a>
@@ -143,7 +143,7 @@ export function Hero() {
               href={createWhatsAppLink()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 sm:px-8 sm:py-4 bg-brand-black/80 backdrop-blur-xl text-brand-offwhite border border-brand-silver/30 text-xs font-semibold uppercase tracking-widest hover:border-brand-white hover:bg-brand-graphite hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-silver shadow-2xl text-center"
+              className="inline-flex items-center justify-center gap-2 pl-6 pr-5 py-3.5 sm:pl-7 sm:pr-6 sm:py-4 bg-brand-black/80 backdrop-blur-xl text-brand-offwhite border border-brand-silver/30 text-xs font-semibold uppercase tracking-widest hover:border-brand-white hover:bg-brand-graphite hover:scale-[1.02] active:scale-[0.98] transition-[transform,background-color,border-color,color] duration-200 focus:outline-none focus:ring-2 focus:ring-brand-silver shadow-2xl text-center select-none"
             >
               <MessageCircle className="w-4 h-4 text-emerald-400" />
               Fale com a Black Store

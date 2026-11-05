@@ -19,10 +19,10 @@ export function StoreGallery() {
               Atendimento Presencial
             </span>
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white mb-4">
+          <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white mb-4 text-balance">
             Conheça Nosso Espaço.
           </h2>
-          <p className="text-brand-silver/90 text-sm sm:text-base font-normal">
+          <p className="text-brand-silver/90 text-sm sm:text-base font-normal text-pretty">
             Seu próximo visual pode começar aqui. Um ambiente moderno, pensado para oferecer uma experiência confortável na escolha das suas peças.
           </p>
         </div>
@@ -31,7 +31,7 @@ export function StoreGallery() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
           
           {/* Main Visual Highlight */}
-          <div className="lg:col-span-7 relative min-h-[360px] sm:min-h-[460px] overflow-hidden border border-brand-border/80 bg-brand-surface">
+          <div className="lg:col-span-7 relative min-h-[360px] sm:min-h-[460px] overflow-hidden border border-brand-border/80 bg-brand-surface ring-1 ring-inset ring-white/10">
             <Image
               src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=800&q=70"
               alt="Ambiente e fachada do estabelecimento Black Store"

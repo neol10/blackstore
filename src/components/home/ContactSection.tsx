@@ -27,11 +27,11 @@ export function ContactSection() {
             </div>
           </div>
 
-          <h2 className="font-display text-4xl sm:text-6xl font-bold uppercase tracking-tight text-brand-white mb-6">
+          <h2 className="font-display text-4xl sm:text-6xl font-bold uppercase tracking-tight text-brand-white mb-6 text-balance">
             Seu Próximo Look Está Aqui.
           </h2>
 
-          <p className="text-brand-silver text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-10">
+          <p className="text-brand-silver text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-10 text-pretty">
             Conheça as coleções da Black Store e fale com nossa equipe para encontrar o que procura. Atendimento rápido e direto para tirar dúvidas sobre tamanhos, modelos e disponibilidade.
           </p>
 
@@ -40,21 +40,21 @@ export function ContactSection() {
               href={createWhatsAppLink()}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver transition-all duration-300 shadow-xl focus:outline-none focus:ring-2 focus:ring-brand-silver"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 pl-8 pr-7 py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver active:scale-[0.98] transition-[transform,background-color,color] duration-200 shadow-xl focus:outline-none focus:ring-2 focus:ring-brand-silver select-none"
             >
               <MessageCircle className="w-4 h-4 text-emerald-600 fill-emerald-600" />
-              Falar pelo WhatsApp
+              <span>Falar pelo WhatsApp</span>
             </a>
 
             <a
               href={siteConfig.instagram.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-brand-black text-brand-silver border border-brand-border text-xs font-semibold uppercase tracking-widest hover:border-brand-silver hover:text-brand-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-silver"
+              className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 pl-8 pr-7 py-4 bg-brand-black text-brand-silver border border-brand-border text-xs font-semibold uppercase tracking-widest hover:border-brand-silver hover:text-brand-white active:scale-[0.98] transition-[transform,border-color,color] duration-200 focus:outline-none focus:ring-2 focus:ring-brand-silver select-none"
             >
               <InstagramIcon className="w-4 h-4" />
               <span>Acompanhar no Instagram</span>
-              <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
+              <ArrowUpRight className="w-3.5 h-3.5 opacity-60 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
             </a>
           </div>
 

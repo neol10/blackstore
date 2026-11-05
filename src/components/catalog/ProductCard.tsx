@@ -57,8 +57,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           : "opacity-0 translate-y-5 scale-[0.98]"
       }`}
     >
-      {/* Product Image Container */}
-      <div className="relative aspect-[3/4] w-full bg-brand-black overflow-hidden">
+      {/* Product Image Container com ring óptico para dark mode */}
+      <div className="relative aspect-[3/4] w-full bg-brand-black overflow-hidden ring-1 ring-inset ring-white/10">
         <Image
           src={product.image}
           alt={`Fotografia de ${product.name}`}
@@ -88,26 +88,26 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         </div>
       </div>
 
-      {/* Product Details */}
+      {/* Product Details com text-balance e text-pretty */}
       <div className="flex-1 flex flex-col justify-between p-5 sm:p-6 bg-gradient-to-b from-brand-card to-brand-surface">
         <div>
-          <h3 className="font-display text-lg font-bold uppercase tracking-wider text-brand-white group-hover:text-brand-silver transition-colors">
+          <h3 className="font-display text-lg font-bold uppercase tracking-wider text-brand-white group-hover:text-brand-silver transition-colors text-balance">
             {product.name}
           </h3>
 
-          <p className="mt-2 text-xs text-brand-silver/80 line-clamp-2 leading-relaxed">
+          <p className="mt-2 text-xs text-brand-silver/80 line-clamp-2 leading-relaxed text-pretty">
             {product.description}
           </p>
         </div>
 
-        {/* Action Button */}
+        {/* Action Button com alinhamento óptico no ícone */}
         <div className="mt-5 pt-4 border-t border-brand-border/60">
           <a
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Consultar disponibilidade de ${product.name} no WhatsApp`}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-brand-surface border border-brand-border text-brand-white text-xs uppercase tracking-wider font-semibold hover:bg-brand-white hover:text-brand-black hover:border-brand-white active:scale-[0.98] transition-[background-color,color,border-color,transform] duration-200 focus:outline-none focus:ring-2 focus:ring-brand-silver select-none"
+            className="w-full flex items-center justify-center gap-2 py-3 pl-4 pr-3.5 bg-brand-surface border border-brand-border text-brand-white text-xs uppercase tracking-wider font-semibold hover:bg-brand-white hover:text-brand-black hover:border-brand-white active:scale-[0.98] transition-[background-color,color,border-color,transform] duration-200 focus:outline-none focus:ring-2 focus:ring-brand-silver select-none"
           >
             <MessageCircle className="w-3.5 h-3.5 text-emerald-400 group-hover:text-black" />
             <span>Consultar Disponibilidade</span>

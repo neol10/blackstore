@@ -47,7 +47,7 @@ export function ProductFilters({
 
       <div className="flex items-center justify-between text-[11px] uppercase tracking-widest text-brand-muted mt-2 border-b border-brand-border/40 pb-2">
         <span>Exibindo catálogo da loja</span>
-        <span>{totalCount} itens disponíveis para consulta</span>
+        <span className="tabular-nums">{totalCount} itens disponíveis para consulta</span>
       </div>
     </div>
   );
