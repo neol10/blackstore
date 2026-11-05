@@ -72,7 +72,7 @@ export function AboutStore() {
           <div className="lg:col-span-6 relative">
             <div className="relative aspect-[4/5] sm:aspect-square w-full overflow-hidden border border-brand-border/80 shadow-2xl">
               <Image
-                src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=1200&q=80"
+                src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=800&q=70"
                 alt="Ambiente de moda masculina e exposição de coleções"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"

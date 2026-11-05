@@ -33,7 +33,7 @@ export function StoreGallery() {
           {/* Main Visual Highlight */}
           <div className="lg:col-span-7 relative min-h-[360px] sm:min-h-[460px] overflow-hidden border border-brand-border/80 bg-brand-surface">
             <Image
-              src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=1200&q=80"
+              src="https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=800&q=70"
               alt="Ambiente e fachada do estabelecimento Black Store"
               fill
               sizes="(max-width: 1024px) 100vw, 60vw"

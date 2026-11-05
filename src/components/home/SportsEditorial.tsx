@@ -34,7 +34,7 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
           <div className="lg:col-span-7 grid grid-cols-12 gap-4">
             <div className="col-span-8 relative h-[380px] sm:h-[480px] overflow-hidden border border-brand-border/60">
               <Image
-                src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=1000&q=80"
+                src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=700&q=70"
                 alt="Moda esportiva e paixão pelo futebol"
                 fill
                 sizes="(max-width: 1024px) 70vw, 40vw"

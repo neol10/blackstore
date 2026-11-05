@@ -65,7 +65,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           className="object-cover object-center filter contrast-[1.02] brightness-95 transition-transform duration-700 ease-out group-hover:scale-105"
-          loading="lazy"
+          priority={index < 4}
         />
 
         {/* Badges Overlay */}
