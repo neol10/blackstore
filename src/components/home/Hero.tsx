@@ -5,8 +5,7 @@ import { MessageCircle, Sparkles } from "lucide-react";
 import { createWhatsAppLink } from "@/lib/whatsapp";
 import { siteConfig } from "@/config/site";
 
-// Otimização: Seleção dinâmica de 60 frames chave (passo de 2: 1, 3, 5, ..., 119)
-// Reduz o peso pela metade (de 7MB para ~3.5MB), agiliza o carregamento e elimina micro-pausas que davam sensação de "travado"
+// Seleção de 60 frames-chave (passo uniforme de 1 até 119)
 const FRAME_NUMBERS = Array.from({ length: 60 }, (_, i) => 1 + i * 2);
 const TOTAL_FRAMES = FRAME_NUMBERS.length;
 
@@ -23,7 +22,8 @@ export function Hero() {
   const targetFrameRef = useRef<number>(0);
   const smoothFrameRef = useRef<number>(0);
 
-  const [scrollProgress, setScrollProgress] = useState(0);
+  // Sincronização 1:1: tanto o canvas quanto os textos usam o mesmo progresso suave (smoothProgress)
+  const [smoothProgress, setSmoothProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // 1. Pré-carregamento dos 60 frames em WebP
@@ -31,7 +31,7 @@ export function Hero() {
     let isMounted = true;
     const images: HTMLImageElement[] = [];
 
-    // Carrega o frame 1 prioritariamente para exibição imediata
+    // Frame 1 prioritário para exibição imediata
     const firstImg = new Image();
     firstImg.src = getFramePath(FRAME_NUMBERS[0]);
     images[0] = firstImg;
@@ -43,7 +43,7 @@ export function Hero() {
       renderFrame(0);
     };
 
-    // Pré-carrega os 59 frames restantes em background
+    // Pré-carrega os 59 restantes em background
     for (let i = 1; i < TOTAL_FRAMES; i++) {
       const img = new Image();
       img.src = getFramePath(FRAME_NUMBERS[i]);
@@ -72,7 +72,6 @@ export function Hero() {
     const iw = img.naturalWidth;
     const ih = img.naturalHeight;
 
-    // Algoritmo matematicamente proporcional: preenche a tela sem distorção
     const hRatio = cw / iw;
     const vRatio = ch / ih;
     const ratio = Math.max(hRatio, vRatio);
@@ -106,17 +105,16 @@ export function Hero() {
     };
   }, [isLoaded]);
 
-  // 4. Interpolação contínua (Lerp) para fluidez absoluta em 60/120 FPS
+  // 4. Interpolação Lerp Contínua (Sincroniza frame e texto no mesmo ritmo)
   useEffect(() => {
     if (!isLoaded) return;
 
     let rafId: number;
 
     const lerpLoop = () => {
-      // Desliza suavemente em direção ao frame alvo sem saltos bruscos
       const diff = targetFrameRef.current - smoothFrameRef.current;
-      if (Math.abs(diff) > 0.04) {
-        smoothFrameRef.current += diff * 0.22;
+      if (Math.abs(diff) > 0.02) {
+        smoothFrameRef.current += diff * 0.24;
         const frameToDraw = Math.min(
           Math.max(Math.round(smoothFrameRef.current), 0),
           TOTAL_FRAMES - 1
@@ -126,6 +124,10 @@ export function Hero() {
           currentFrameRef.current = frameToDraw;
           renderFrame(frameToDraw);
         }
+
+        // Atualiza o progresso suave unificado para as frases
+        const norm = smoothFrameRef.current / (TOTAL_FRAMES - 1);
+        setSmoothProgress(norm);
       }
 
       rafId = requestAnimationFrame(lerpLoop);
@@ -138,7 +140,7 @@ export function Hero() {
     };
   }, [isLoaded]);
 
-  // 5. Atualização rápida por scroll do usuário
+  // 5. Scroll listener leve
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -151,14 +153,13 @@ export function Hero() {
       const maxScroll = containerRef.current.scrollHeight - window.innerHeight;
       const scrollTop = -rect.top;
 
-      // Progresso normalizado de 0 a 1 dentro da trilha do Hero
       const rawProgress = maxScroll > 0 ? scrollTop / maxScroll : 0;
       const progress = Math.min(Math.max(rawProgress, 0), 1);
-      setScrollProgress(progress);
 
       if (prefersReducedMotion) {
         targetFrameRef.current = 0;
         smoothFrameRef.current = 0;
+        setSmoothProgress(0);
       } else {
         targetFrameRef.current = Math.round(progress * (TOTAL_FRAMES - 1));
       }
@@ -172,25 +173,26 @@ export function Hero() {
     };
   }, [isLoaded]);
 
-  // Efeitos visuais dinâmicos conforme a rolagem avança
-  const contentOpacity = Math.max(1 - scrollProgress * 3.2, 0);
-  const contentTranslateY = -scrollProgress * 45;
+  // Sincronia perfeita das frases com o terno:
+  // 1. O texto principal faz fade-out rápido e proporcional quando o abotoamento começa
+  const contentOpacity = Math.max(1 - smoothProgress * 3.4, 0);
+  const contentTranslateY = -smoothProgress * 45;
 
-  // Destaque editorial sutil que surge no meio da sequência de movimento
+  // 2. A legenda editorial surge exatamente quando as mãos fecham o botão central
   const editorialOpacity =
-    scrollProgress > 0.32 && scrollProgress < 0.75
-      ? Math.sin(((scrollProgress - 0.32) / 0.43) * Math.PI)
+    smoothProgress > 0.28 && smoothProgress < 0.76
+      ? Math.sin(((smoothProgress - 0.28) / 0.48) * Math.PI)
       : 0;
 
   return (
     <div
       ref={containerRef}
       id="inicio"
-      className="relative h-[180vh] sm:h-[210vh] bg-brand-black select-none"
+      className="relative h-[150vh] sm:h-[180vh] bg-brand-black select-none"
     >
-      {/* Container Sticky preso durante a rolagem da sequência */}
+      {/* Container Sticky preso durante a rolagem */}
       <div className="sticky top-0 left-0 w-full h-[100dvh] overflow-hidden flex items-center justify-center">
-        {/* Canvas de Alta Precisão (60 frames otimizados e interpolados) */}
+        {/* Canvas de Alta Precisão */}
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full block filter brightness-[0.9] contrast-[1.05]"
@@ -277,7 +279,7 @@ export function Hero() {
           </div>
         </div>
 
-        {/* 2. LEGENDA NARRATIVA SUTIL NO MEIO DO SCROLL */}
+        {/* 2. LEGENDA NARRATIVA SUTIL NO ÁPICE DO MOVIMENTO DO TERNO */}
         <div
           className="absolute z-10 max-w-xl px-6 text-center sm:text-left sm:left-12 lg:left-24 pointer-events-none transition-opacity duration-150"
           style={{
@@ -299,7 +301,7 @@ export function Hero() {
         {/* Indicador de scroll inicial */}
         <div
           className={`absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-[10px] uppercase tracking-widest text-brand-muted pointer-events-none transition-opacity duration-300 ${
-            scrollProgress > 0.05 ? "opacity-0" : "opacity-75"
+            smoothProgress > 0.05 ? "opacity-0" : "opacity-75"
           }`}
         >
           <span>Role para animar</span>
