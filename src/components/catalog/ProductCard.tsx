@@ -49,12 +49,12 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
     <article
       ref={cardRef}
       style={{
-        transitionDelay: isVisible ? `${(index % 4) * 75}ms` : "0ms",
+        transitionDelay: isVisible ? `${(index % 4) * 60}ms` : "0ms",
       }}
-      className={`group flex flex-col bg-brand-card border border-brand-border/70 overflow-hidden transition-all duration-500 ease-out hover:border-brand-silver/50 hover:shadow-2xl ${
+      className={`group flex flex-col bg-brand-card border border-brand-border/70 overflow-hidden transition-[transform,opacity,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-brand-silver/50 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.85)] ${
         isVisible
           ? "opacity-100 translate-y-0 scale-100"
-          : "opacity-0 translate-y-6 scale-[0.98]"
+          : "opacity-0 translate-y-5 scale-[0.98]"
       }`}
     >
       {/* Product Image Container */}
@@ -107,7 +107,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Consultar disponibilidade de ${product.name} no WhatsApp`}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-brand-surface border border-brand-border text-brand-white text-xs uppercase tracking-wider font-semibold hover:bg-brand-white hover:text-brand-black hover:border-brand-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-silver"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-brand-surface border border-brand-border text-brand-white text-xs uppercase tracking-wider font-semibold hover:bg-brand-white hover:text-brand-black hover:border-brand-white active:scale-[0.98] transition-[background-color,color,border-color,transform] duration-200 focus:outline-none focus:ring-2 focus:ring-brand-silver select-none"
           >
             <MessageCircle className="w-3.5 h-3.5 text-emerald-400 group-hover:text-black" />
             <span>Consultar Disponibilidade</span>

@@ -27,7 +27,7 @@ export function WhatsAppButton({
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Falar com a Black Store no WhatsApp"
-        className={`fixed bottom-6 right-6 z-40 flex items-center gap-3 px-4 py-3 bg-[#25D366] text-black font-semibold rounded-full shadow-2xl hover:bg-[#20ba59] hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2 focus:ring-offset-brand-black ${className}`}
+        className={`fixed bottom-6 right-6 z-40 flex items-center gap-3 px-4 py-3 bg-[#25D366] text-black font-semibold rounded-full shadow-[0_12px_32px_rgba(37,211,102,0.35)] hover:bg-[#20ba59] hover:scale-105 active:scale-95 transition-[transform,background-color,box-shadow] duration-200 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2 focus:ring-offset-brand-black select-none ${className}`}
       >
         <MessageCircle className="w-6 h-6 stroke-[2.2]" />
         <span className="hidden sm:inline-block text-xs uppercase tracking-wider font-bold">

@@ -32,9 +32,9 @@ export function ProductFilters({
             <button
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
-              className={`shrink-0 px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all duration-300 border focus:outline-none focus:ring-2 focus:ring-brand-silver ${
+              className={`shrink-0 px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-[background-color,border-color,color,transform] duration-200 border focus:outline-none focus:ring-2 focus:ring-brand-silver active:scale-[0.97] select-none ${
                 isActive
-                  ? "bg-brand-white text-brand-black border-brand-white shadow"
+                  ? "bg-brand-white text-brand-black border-brand-white shadow-md"
                   : "bg-brand-surface text-brand-silver border-brand-border hover:border-brand-silver hover:text-brand-white"
               }`}
               aria-pressed={isActive}

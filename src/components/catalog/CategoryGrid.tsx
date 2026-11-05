@@ -50,7 +50,7 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
               key={cat.id}
               href={`#destaques`}
               onClick={(e) => handleCategoryClick(cat.targetFilter, e)}
-              className="group relative h-[380px] sm:h-[420px] overflow-hidden bg-brand-black border border-brand-border/80 flex flex-col justify-end p-6 sm:p-8 transition-all duration-500 hover:border-brand-silver/60 focus:outline-none focus:ring-2 focus:ring-brand-silver"
+              className="group relative h-[380px] sm:h-[420px] overflow-hidden bg-brand-black border border-brand-border/80 flex flex-col justify-end p-6 sm:p-8 transition-[border-color,box-shadow,transform] duration-300 hover:border-brand-silver/60 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.85)] active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-brand-silver select-none"
             >
               {/* Image Background */}
               <div className="absolute inset-0 z-0">
@@ -59,7 +59,7 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
                   alt={cat.name}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover object-center filter grayscale-[30%] brightness-[0.75] contrast-[1.05] transition-transform duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-[0.85]"
+                  className="object-cover object-center filter grayscale-[25%] brightness-[0.78] contrast-[1.05] transition-transform duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-[0.88]"
                 />
                 {/* Degradê de leitura */}
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/50 to-transparent" />
@@ -71,8 +71,8 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
                   <span className="text-[10px] uppercase tracking-widest text-brand-silver/80 font-mono">
                     Coleção Black Store
                   </span>
-                  <div className="w-8 h-8 rounded-full bg-brand-black/60 border border-brand-border/60 flex items-center justify-center text-brand-silver group-hover:text-brand-white group-hover:border-brand-silver group-hover:bg-brand-white group-hover:text-brand-black transition-colors">
-                    <ArrowUpRight className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-full bg-brand-black/60 border border-brand-border/60 flex items-center justify-center text-brand-silver group-hover:text-brand-black group-hover:border-brand-white group-hover:bg-brand-white transition-[background-color,color,border-color,transform] duration-300">
+                    <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:rotate-45" />
                   </div>
                 </div>
 

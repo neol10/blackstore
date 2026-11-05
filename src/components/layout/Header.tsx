@@ -83,7 +83,7 @@ export function Header() {
               href={createWhatsAppLink()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-white text-brand-black text-xs font-semibold uppercase tracking-wider hover:bg-brand-silver transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-silver"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-white text-brand-black text-xs font-semibold uppercase tracking-wider hover:bg-brand-silver active:scale-[0.98] transition-[background-color,transform] duration-200 focus:outline-none focus:ring-2 focus:ring-brand-silver select-none"
             >
               <MessageCircle className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600" />
               WhatsApp
@@ -97,7 +97,7 @@ export function Header() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Falar no WhatsApp"
-              className="p-2 text-brand-white bg-brand-surface border border-brand-border rounded-full hover:border-brand-silver focus:outline-none focus:ring-2 focus:ring-brand-silver"
+              className="p-2 text-brand-white bg-brand-surface border border-brand-border rounded-full hover:border-brand-silver active:scale-[0.95] transition-[border-color,transform] duration-150 focus:outline-none focus:ring-2 focus:ring-brand-silver"
             >
               <MessageCircle className="w-4 h-4 text-emerald-400" />
             </a>
