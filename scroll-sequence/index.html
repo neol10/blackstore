@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Black Store — Animação de Scroll Cinematográfica</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Tela de Pré-carregamento elegante -->
+  <div id="loader" class="loader-overlay">
+    <div class="loader-content">
+      <span class="loader-brand">BLACK STORE</span>
+      <div class="loader-bar-bg">
+        <div id="loader-progress" class="loader-bar-fill"></div>
+      </div>
+      <p id="loader-text" class="loader-status">Carregando experiência: 0%</p>
+    </div>
+  </div>
+
+  <!-- Trilha de Scroll (Controla a duração da animação) -->
+  <div id="scroll-track" class="scroll-track">
+    <!-- Viewport Fixa (Sticky) que preenche 100% da tela durante a rolagem -->
+    <div class="sticky-container">
+      
+      <!-- Canvas responsivo de alta precisão (HiDPI / Retina) -->
+      <canvas id="scroll-canvas"></canvas>
+
+      <!-- Gradiente suave sobre o canvas para legibilidade -->
+      <div class="canvas-vignette"></div>
+
+      <!-- Camadas de Textos Editoriais que surgem conforme o scroll avança -->
+      <div class="narrative-overlay">
+        <!-- Momento 1: Início -->
+        <div class="narrative-step step-1" data-start="0.02" data-end="0.25">
+          <span class="tag">ALFAIATARIA CONTEMPORÂNEA</span>
+          <h2>Elegância em Cada Movimento</h2>
+          <p>A precisão do corte sob medida em perfeita harmonia com o seu estilo.</p>
+        </div>
+
+        <!-- Momento 2: Meio -->
+        <div class="narrative-step step-2" data-start="0.35" data-end="0.65">
+          <span class="tag">PRESENÇA & ATITUDE</span>
+          <h2>A Força da Postura</h2>
+          <p>Peças desenvolvidas para destacar a confiança de quem as veste.</p>
+        </div>
+
+        <!-- Momento 3: Final da Sequência -->
+        <div class="narrative-step step-3" data-start="0.75" data-end="0.95">
+          <span class="tag">COLEÇÕES 2026</span>
+          <h2>Sua Marca Pessoal</h2>
+          <p>Conheça os destaques exclusivos da Black Store logo abaixo.</p>
+        </div>
+      </div>
+
+      <!-- Indicador sutil de scroll -->
+      <div id="scroll-hint" class="scroll-hint">
+        <span>Role para baixo</span>
+        <div class="scroll-arrow">↓</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Seção Seguinte: Os produtos e conteúdo surgem naturalmente após o scroll -->
+  <section id="conteudo-seguinte" class="content-section">
+    <div class="content-wrapper">
+      <span class="section-tag">CATÁLOGO EXCLUSIVO</span>
+      <h2 class="section-title">Coleções Black Store</h2>
+      <p class="section-desc">
+        A transição do vídeo de rolagem deságua diretamente na vitrine.
+        A rolagem segue natural, sem travas e sem quebras de layout.
+      </p>
+
+      <div class="sample-grid">
+        <div class="sample-card">
+          <div class="card-box"></div>
+          <h3>Alfaiataria Premium</h3>
+          <p>Camisas sociais, ternos e calças estruturadas.</p>
+        </div>
+        <div class="sample-card">
+          <div class="card-box"></div>
+          <h3>Streetwear de Luxo</h3>
+          <p>Oversized heavyweight e modelagens urbanas.</p>
+        </div>
+        <div class="sample-card">
+          <div class="card-box"></div>
+          <h3>Linha Esportiva</h3>
+          <p>Tecidos dry com acabamento e caimento de alto padrão.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
