@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/home/Hero";
 import { CategoryGrid } from "@/components/catalog/CategoryGrid";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
+import { Atelier3DExperience } from "@/components/home/Atelier3DExperience";
 import { SportsEditorial } from "@/components/home/SportsEditorial";
 import { AboutStore } from "@/components/home/AboutStore";
 import { StoreGallery } from "@/components/home/StoreGallery";
@@ -28,29 +29,32 @@ export default function HomePage() {
       <Header />
 
       <main className="flex-1">
-        {/* 1. Hero / Primeira Dobra */}
+        {/* 1. Hero / Primeira Dobra com Vídeo Contínuo */}
         <Hero />
 
         {/* 2. Categorias Principais */}
         <CategoryGrid onSelectCategory={setSelectedCategory} />
 
-        {/* 3. Vitrine de Produtos com Filtros Dinâmicos */}
+        {/* 3. Vitrine de Produtos com Filtros Dinâmicos e Acesso 3D */}
         <ProductGrid
           products={productsData}
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
 
-        {/* 4. Linha Esportiva & Futebol Editorial */}
+        {/* 4. Experiência 3D Interativa • Black Store Lab */}
+        <Atelier3DExperience />
+
+        {/* 5. Linha Esportiva & Futebol Editorial */}
         <SportsEditorial onSelectCategory={setSelectedCategory} />
 
-        {/* 5. Identidade & Filosofia da Marca */}
+        {/* 6. Identidade & Filosofia da Marca */}
         <AboutStore />
 
-        {/* 6. Espaço Físico & Horários */}
+        {/* 7. Espaço Físico & Horários */}
         <StoreGallery />
 
-        {/* 7. CTA Final & Contato */}
+        {/* 8. CTA Final & Contato */}
         <ContactSection />
       </main>
 
