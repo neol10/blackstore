@@ -2,10 +2,10 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { MessageCircle, Box } from "lucide-react";
+import { MessageCircle, Eye } from "lucide-react";
 import { ProductItem } from "@/types";
 import { createProductWhatsAppLink } from "@/lib/whatsapp";
-import { Product3DModal } from "@/components/ui/Product3DModal";
+import { ProductDetailModal } from "@/components/ui/ProductDetailModal";
 
 interface ProductCardProps {
   product: ProductItem;
@@ -15,11 +15,12 @@ interface ProductCardProps {
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const whatsappUrl = createProductWhatsAppLink(product.name);
   const [isVisible, setIsVisible] = useState(false);
-  const [is3DModalOpen, setIs3DModalOpen] = useState(false);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const cardRef = useRef<HTMLElement | null>(null);
 
+  const isSneaker = product.category === "tenis";
+
   useEffect(() => {
-    // Se o navegador não suportar IntersectionObserver, exibe imediatamente
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
       setIsVisible(true);
       return;
@@ -54,25 +55,100 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         style={{
           transitionDelay: isVisible ? `${(index % 4) * 60}ms` : "0ms",
         }}
-        className={`group flex flex-col bg-brand-card border border-brand-border/70 overflow-hidden transition-[transform,opacity,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-brand-silver/50 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.85)] ${
+        className={`group relative flex flex-col bg-brand-card border border-brand-border/70 overflow-hidden transition-[transform,opacity,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-brand-silver/50 hover:shadow-[0_22px_45px_-12px_rgba(0,0,0,0.9)] ${
           isVisible
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 translate-y-5 scale-[0.98]"
         }`}
       >
-        {/* Product Image Container com ring óptico para dark mode */}
-        <div className="relative aspect-[3/4] w-full bg-brand-black overflow-hidden ring-1 ring-inset ring-white/10">
+        {/* ============================================================== */}
+        {/* CABIDE BOUTIQUE: Apenas para Roupas e Calças */}
+        {/* Barra de arara superior + Gancho de metal escovado */}
+        {/* ============================================================== */}
+        {!isSneaker && (
+          <div className="relative w-full h-8 bg-gradient-to-b from-[#18181c] to-[#101013] border-b border-white/10 flex items-center justify-center overflow-visible select-none">
+            {/* Barra da Arara Horizontal cromada */}
+            <div className="absolute top-1 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+            
+            {/* Gancho Metálico do Cabide em SVG Realista com Brilho */}
+            <div className="relative -top-1 flex flex-col items-center">
+              <svg
+                width="28"
+                height="24"
+                viewBox="0 0 28 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
+              >
+                {/* Gancho Curvo de Metal */}
+                <path
+                  d="M14 22V14C14 11 16.5 8.5 19 8.5C21.5 8.5 23 10.5 23 12C23 14 21.5 15 20.5 15"
+                  stroke="url(#hanger_chrome)"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                />
+                {/* Triângulo sutil da base do cabide */}
+                <path
+                  d="M4 23L14 18L24 23"
+                  stroke="url(#hanger_chrome)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <defs>
+                  <linearGradient id="hanger_chrome" x1="0" y1="0" x2="28" y2="24" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#F5F5F7" />
+                    <stop offset="0.45" stopColor="#D4D4D8" />
+                    <stop offset="0.75" stopColor="#A1A1AA" />
+                    <stop offset="1" stopColor="#E4E4E7" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+
+            {/* Tag discreta de arara boutique */}
+            <span className="absolute right-3 top-2 text-[8px] uppercase tracking-widest text-brand-silver/50 font-mono">
+              Boutique Hanger
+            </span>
+          </div>
+        )}
+
+        {/* ============================================================== */}
+        {/* CONTAINER DA IMAGEM */}
+        {/* - Para Roupas: Oscilação pendular suave do cabide no hover */}
+        {/* - Para Sneakers: Elevação e apoio sobre prateleira */}
+        {/* ============================================================== */}
+        <div
+          onClick={() => setIsDetailOpen(true)}
+          className={`relative aspect-[3/4] w-full bg-brand-black overflow-hidden ring-1 ring-inset ring-white/10 cursor-pointer ${
+            !isSneaker ? "animate-hanger-swing" : ""
+          }`}
+        >
+          {/* SPOTLIGHT DE PRATELEIRA (Apenas para Sneakers): Feixe de luz vertical ao passar o mouse */}
+          {isSneaker && (
+            <>
+              {/* Feixe Cônico Superior de Luz que acende no hover */}
+              <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
+              
+              {/* Brilho radial no centro do tênis */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-radial from-white/15 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none blur-xl z-10" />
+            </>
+          )}
+
+          {/* Fotografia da Peça com escala suave */}
           <Image
             src={product.image}
             alt={`Fotografia de ${product.name}`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover object-center filter contrast-[1.02] brightness-95 transition-transform duration-700 ease-out group-hover:scale-105"
+            className={`object-cover object-center filter contrast-[1.02] brightness-95 transition-all duration-500 ease-out group-hover:scale-105 ${
+              isSneaker ? "group-hover:-translate-y-1.5" : ""
+            }`}
             priority={index < 4}
           />
 
-          {/* Badges Overlay */}
-          <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+          {/* Badges de Categoria */}
+          <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-20">
             <span className="text-[10px] font-medium uppercase tracking-widest px-2.5 py-1 bg-brand-black/85 backdrop-blur-md text-brand-silver border border-brand-border/60">
               {product.categoryLabel}
             </span>
@@ -82,28 +158,55 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 {product.highlightBadge}
               </span>
             ) : (
-              product.isDemo && (
-                <span className="text-[9px] uppercase tracking-widest px-2 py-0.5 bg-brand-graphite/70 text-brand-silver/70 border border-brand-border/40">
-                  Modelo Conceito
+              isSneaker && (
+                <span className="text-[9px] uppercase tracking-widest px-2 py-0.5 bg-brand-graphite/80 text-brand-white border border-white/20 backdrop-blur-sm">
+                  Prateleira Sneaker
                 </span>
               )
             )}
           </div>
 
-          {/* Botão Flutuante Rápido "Ver em 3D" sobre a foto */}
-          <button
-            onClick={() => setIs3DModalOpen(true)}
-            className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-black/80 hover:bg-brand-white text-brand-silver hover:text-brand-black border border-white/15 text-[10px] uppercase font-semibold tracking-wider backdrop-blur-md transition-all duration-200 shadow-lg"
-          >
-            <Box className="w-3.5 h-3.5 text-emerald-400 group-hover:text-black" />
-            <span>360° 3D</span>
-          </button>
+          {/* ============================================================ */}
+          {/* PRATELEIRA FLUTUANTE 3D: Apenas na base do Tênis */}
+          {/* ============================================================ */}
+          {isSneaker && (
+            <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
+              {/* Superfície superior da prateleira com iluminação LED */}
+              <div className="relative h-[5px] bg-gradient-to-r from-transparent via-white/80 to-transparent shadow-[0_0_15px_rgba(255,255,255,0.7)] group-hover:shadow-[0_0_22px_rgba(255,255,255,0.95)] transition-shadow duration-300" />
+              {/* Chanfro da prateleira metálica fosca */}
+              <div className="h-2.5 bg-gradient-to-b from-[#1c1c22] to-[#0d0d10] border-t border-white/20 flex items-center justify-between px-3">
+                <span className="text-[7px] uppercase tracking-[0.2em] text-brand-silver/60 font-mono">
+                  Shelf • Gallery
+                </span>
+                <span className="w-1 h-1 rounded-full bg-emerald-400 group-hover:animate-ping" />
+              </div>
+            </div>
+          )}
+
+          {/* Botão sutil de visualização rápida no hover */}
+          <div className="absolute bottom-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsDetailOpen(true);
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-black/85 hover:bg-brand-white text-brand-silver hover:text-brand-black border border-white/15 text-[10px] uppercase font-semibold tracking-wider backdrop-blur-md transition-colors shadow-lg"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>{isSneaker ? "Ver Tênis" : "Ver Peça"}</span>
+            </button>
+          </div>
         </div>
 
-        {/* Product Details com text-balance e text-pretty */}
+        {/* ============================================================== */}
+        {/* INFORMAÇÕES DO PRODUTO */}
+        {/* ============================================================== */}
         <div className="flex-1 flex flex-col justify-between p-5 sm:p-6 bg-gradient-to-b from-brand-card to-brand-surface">
           <div>
-            <h3 className="font-display text-lg font-bold uppercase tracking-wider text-brand-white group-hover:text-brand-silver transition-colors text-balance">
+            <h3
+              onClick={() => setIsDetailOpen(true)}
+              className="font-display text-lg font-bold uppercase tracking-wider text-brand-white group-hover:text-brand-silver transition-colors text-balance cursor-pointer"
+            >
               {product.name}
             </h3>
 
@@ -112,7 +215,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </p>
           </div>
 
-          {/* Action Buttons */}
+          {/* Botões de Ação */}
           <div className="mt-5 pt-4 border-t border-brand-border/60 flex flex-col gap-2">
             <a
               href={whatsappUrl}
@@ -128,13 +231,11 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         </div>
       </article>
 
-      {/* Modal 360° Three.js */}
-      <Product3DModal
-        isOpen={is3DModalOpen}
-        onClose={() => setIs3DModalOpen(false)}
-        productName={product.name}
-        categoryLabel={product.categoryLabel}
-        modelUrl={product.modelUrl}
+      {/* Modal Leve de Detalhes e Zoom da Peça */}
+      <ProductDetailModal
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        product={product}
       />
     </>
   );

@@ -9,7 +9,7 @@ export const productsData: ProductItem[] = [
     description: "Couro legítimo com acabamento premium all-white, perfurações de respiração e solado com amortecimento icônico.",
     image: "/products/air-force-white.jpg",
     isDemo: false,
-    highlightBadge: "Modelo 3D 360°",
+    highlightBadge: "Destaque Sneaker",
     modelUrl: "/models/air-force-1.glb",
   },
   {
