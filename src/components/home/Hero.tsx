@@ -15,7 +15,7 @@ export function Hero() {
     const video = videoRef.current;
     if (!video) return;
 
-    // Garante que o navegador reconheça como mudo para autorizar o autoplay imediato
+    // Garante flags de mídia para autoplay nativo
     video.muted = true;
     video.defaultMuted = true;
     video.playsInline = true;
@@ -34,7 +34,6 @@ export function Hero() {
       video.addEventListener("canplay", startPlaying, { once: true });
     }
 
-    // Fallback para navegadores móveis com modo de economia de dados ativo
     const unlock = () => {
       startPlaying();
       ["touchstart", "pointerdown", "click", "scroll"].forEach((ev) =>
@@ -87,7 +86,7 @@ export function Hero() {
       id="inicio"
       className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden bg-brand-black select-none pt-24 pb-12 sm:pt-28 sm:pb-16"
     >
-      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO (REPRODUÇÃO NATIVA GARANTIDA COM SRC DIRETO) */}
+      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO (100% QUALIDADE PURA ORIGINAL DO ARQUIVO) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <video
           ref={videoRef}
@@ -101,9 +100,8 @@ export function Hero() {
           className="w-full h-full object-cover object-[center_35%] sm:object-[center_30%]"
         />
 
-        {/* Gradientes cinematográficos de iluminação de luxo */}
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/30 to-brand-black/60 pointer-events-none" />
-        <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+        {/* Gradiente sutil à esquerda para proteger o texto, mantendo 100% da vivacidade e nitidez original do vídeo no centro e na vitrine */}
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-black/70 via-brand-black/35 to-transparent pointer-events-none" />
 
         {/* Fusão inferior direta com as coleções */}
         <div className="absolute inset-x-0 bottom-0 h-32 sm:h-44 bg-gradient-to-t from-brand-surface via-brand-surface/75 to-transparent pointer-events-none" />
