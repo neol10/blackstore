@@ -2,10 +2,11 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { MessageCircle, Eye } from "lucide-react";
+import { MessageCircle, Eye, Ruler } from "lucide-react";
 import { ProductItem } from "@/types";
 import { createProductWhatsAppLink } from "@/lib/whatsapp";
 import { ProductDetailModal } from "@/components/ui/ProductDetailModal";
+import { SmartFitModal } from "@/components/ui/SmartFitModal";
 
 interface ProductCardProps {
   product: ProductItem;
@@ -16,6 +17,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const whatsappUrl = createProductWhatsAppLink(product.name);
   const [isVisible, setIsVisible] = useState(false);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isFitOpen, setIsFitOpen] = useState(false);
   const cardRef = useRef<HTMLElement | null>(null);
 
   const isSneaker = product.category === "tenis";
@@ -217,6 +219,14 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
           {/* Botões de Ação */}
           <div className="mt-5 pt-4 border-t border-brand-border/60 flex flex-col gap-2">
+            <button
+              onClick={() => setIsFitOpen(true)}
+              className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-brand-silver hover:text-white text-[11px] uppercase tracking-wider font-semibold transition-colors"
+            >
+              <Ruler className="w-3.5 h-3.5 text-emerald-400" />
+              <span>{isSneaker ? "Guia de Numeração" : "Descobrir Meu Tamanho"}</span>
+            </button>
+
             <a
               href={whatsappUrl}
               target="_blank"
@@ -235,6 +245,13 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       <ProductDetailModal
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
+        product={product}
+      />
+
+      {/* Modal Inteligente de Caimento (Smart Fit) */}
+      <SmartFitModal
+        isOpen={isFitOpen}
+        onClose={() => setIsFitOpen(false)}
         product={product}
       />
     </>

@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { X, MessageCircle, ZoomIn, ZoomOut, Sparkles, Check, Footprints, Shirt } from "lucide-react";
+import { X, MessageCircle, ZoomIn, ZoomOut, Sparkles, Check, Footprints, Shirt, Ruler } from "lucide-react";
 import { ProductItem } from "@/types";
 import { createProductWhatsAppLink } from "@/lib/whatsapp";
+import { SmartFitModal } from "@/components/ui/SmartFitModal";
 
 interface ProductDetailModalProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ interface ProductDetailModalProps {
 
 export function ProductDetailModal({ isOpen, onClose, product }: ProductDetailModalProps) {
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isFitOpen, setIsFitOpen] = useState(false);
 
   if (!isOpen || !product) return null;
 
@@ -138,8 +140,16 @@ export function ProductDetailModal({ isOpen, onClose, product }: ProductDetailMo
             </div>
           </div>
 
-          {/* Botão de WhatsApp */}
+          {/* Botão de WhatsApp e Guia de Tamanhos */}
           <div className="mt-8 pt-6 border-t border-brand-border/60 flex flex-col gap-2.5">
+            <button
+              onClick={() => setIsFitOpen(true)}
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded bg-white/5 hover:bg-white/10 border border-white/10 text-brand-silver hover:text-white text-xs uppercase tracking-wider font-semibold transition-colors"
+            >
+              <Ruler className="w-4 h-4 text-emerald-400" />
+              <span>{isSneaker ? "Guia de Numeração do Tênis" : "Descobrir Meu Tamanho Ideal"}</span>
+            </button>
+
             <a
               href={whatsappUrl}
               target="_blank"
@@ -159,6 +169,13 @@ export function ProductDetailModal({ isOpen, onClose, product }: ProductDetailMo
         </div>
 
       </div>
+
+      {/* Modal Inteligente de Caimento (Smart Fit) */}
+      <SmartFitModal
+        isOpen={isFitOpen}
+        onClose={() => setIsFitOpen(false)}
+        product={product}
+      />
     </div>
   );
 }
