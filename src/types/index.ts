@@ -24,4 +24,5 @@ export interface ProductItem {
   image: string;
   isDemo: boolean;
   highlightBadge?: string;
+  modelUrl?: string;
 }

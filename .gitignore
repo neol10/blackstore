@@ -26,6 +26,11 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# temporary media archives
+*.zip
+video banner.mp4
+homem de terno*
+
 # vercel
 .vercel
 

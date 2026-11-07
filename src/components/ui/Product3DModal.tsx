@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "meshoptimizer";
 import { X, RotateCcw, Play, Pause, MessageCircle, Sparkles } from "lucide-react";
 import { createProductWhatsAppLink } from "@/lib/whatsapp";
 
@@ -108,33 +109,82 @@ export function Product3DModal({
     // 7. Carregamento do Modelo (.glb) ou Manequim de Alfaiataria Esculpido
     if (modelUrl) {
       const loader = new GLTFLoader();
+      loader.setMeshoptDecoder(MeshoptDecoder);
       loader.load(
         modelUrl,
         (gltf) => {
           const model = gltf.scene;
+
+          // Se for calçado / sneaker, aplica materiais PBR de couro branco e metal
+          const isSneaker =
+            modelUrl.includes("air-force") ||
+            modelUrl.includes("shoe") ||
+            modelUrl.includes("sneaker") ||
+            categoryLabel.toLowerCase().includes("tênis") ||
+            categoryLabel.toLowerCase().includes("tenis");
+
+          if (isSneaker) {
+            model.traverse((child) => {
+              if ((child as THREE.Mesh).isMesh) {
+                const mesh = child as THREE.Mesh;
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+
+                const matName = (mesh.material as any)?.name || "";
+                if (matName.includes("Metal") || matName.includes("Degradable")) {
+                  mesh.material = new THREE.MeshStandardMaterial({
+                    color: 0xd4d4d8,
+                    metalness: 0.95,
+                    roughness: 0.18,
+                  });
+                } else if (matName.includes("Fabric") || matName.includes("Cloth")) {
+                  mesh.material = new THREE.MeshStandardMaterial({
+                    color: 0xf4f4f5,
+                    roughness: 0.75,
+                    metalness: 0.02,
+                  });
+                } else {
+                  mesh.material = new THREE.MeshStandardMaterial({
+                    color: 0xfafafc,
+                    roughness: 0.52,
+                    metalness: 0.04,
+                  });
+                }
+              }
+            });
+          } else {
+            model.traverse((child) => {
+              if ((child as THREE.Mesh).isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+              }
+            });
+          }
+
           // Centraliza e ajusta escala automaticamente
           const box = new THREE.Box3().setFromObject(model);
           const center = box.getCenter(new THREE.Vector3());
           const size = box.getSize(new THREE.Vector3());
           const maxAxis = Math.max(size.x, size.y, size.z);
 
-          model.scale.multiplyScalar(2.0 / maxAxis);
-          model.position.sub(center.multiplyScalar(2.0 / maxAxis));
-          model.position.y += 0.1;
+          const scaleFactor = isSneaker ? 2.3 / maxAxis : 2.0 / maxAxis;
+          model.scale.multiplyScalar(scaleFactor);
+          model.position.sub(center.multiplyScalar(scaleFactor));
 
-          model.traverse((child) => {
-            if ((child as THREE.Mesh).isMesh) {
-              child.castShadow = true;
-              child.receiveShadow = true;
-            }
-          });
+          if (isSneaker) {
+            model.position.y += 0.05;
+            model.rotation.y = Math.PI * 0.28;
+            model.rotation.x = 0.06;
+          } else {
+            model.position.y += 0.1;
+          }
 
           modelGroup.add(model);
           setIsLoading(false);
         },
         undefined,
-        () => {
-          // Fallback se o arquivo .glb ainda não existir: renderiza manequim de luxo esculpido
+        (err) => {
+          console.warn("Fallback para manequim procedural:", err);
           createLuxuryMannequin(modelGroup);
           setIsLoading(false);
         }
@@ -272,23 +322,50 @@ export function Product3DModal({
             </h2>
 
             <div className="space-y-3 text-xs sm:text-sm text-brand-silver/90 leading-relaxed pt-3 border-t border-brand-border/40">
-              <p>
-                Visualização tridimensional de alta precisão. Inspecione o caimento, as proporções e a estrutura geométrica da peça sob qualquer perspectiva.
-              </p>
-              <ul className="space-y-1.5 pt-2 text-[11px] uppercase tracking-wider text-brand-muted">
-                <li className="flex items-center gap-2">
-                  <span className="w-1 h-1 bg-brand-white rounded-full" />
-                  Corte e alfaiataria estruturada
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-1 h-1 bg-brand-white rounded-full" />
-                  Textura e simulação têxtil contemporânea
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="w-1 h-1 bg-brand-white rounded-full" />
-                  Caimento sob medida exclusivo
-                </li>
-              </ul>
+              {categoryLabel.toLowerCase().includes("tênis") ||
+              categoryLabel.toLowerCase().includes("tenis") ||
+              productName.toLowerCase().includes("sneaker") ||
+              productName.toLowerCase().includes("air force") ? (
+                <>
+                  <p>
+                    Inspeção tridimensional de alta definição. Gire o sneaker em 360°, dê zoom e analise o acabamento do couro legítimo all-white, o relevo do solado e cada detalhe estrutural.
+                  </p>
+                  <ul className="space-y-1.5 pt-2 text-[11px] uppercase tracking-wider text-brand-muted">
+                    <li className="flex items-center gap-2">
+                      <span className="w-1 h-1 bg-brand-white rounded-full" />
+                      Cabedal em couro nobre texturizado e costuras reforçadas
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1 h-1 bg-brand-white rounded-full" />
+                      Solado clássico com câmara de ar e absorção de impacto
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1 h-1 bg-brand-white rounded-full" />
+                      Dubrae metálico frontal e biqueira microperfurada
+                    </li>
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <p>
+                    Visualização tridimensional de alta precisão. Inspecione o caimento, as proporções e a estrutura geométrica da peça sob qualquer perspectiva.
+                  </p>
+                  <ul className="space-y-1.5 pt-2 text-[11px] uppercase tracking-wider text-brand-muted">
+                    <li className="flex items-center gap-2">
+                      <span className="w-1 h-1 bg-brand-white rounded-full" />
+                      Corte e alfaiataria estruturada
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1 h-1 bg-brand-white rounded-full" />
+                      Textura e simulação têxtil contemporânea
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="w-1 h-1 bg-brand-white rounded-full" />
+                      Caimento sob medida exclusivo
+                    </li>
+                  </ul>
+                </>
+              )}
             </div>
           </div>
 

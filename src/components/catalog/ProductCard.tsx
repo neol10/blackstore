@@ -134,6 +134,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         onClose={() => setIs3DModalOpen(false)}
         productName={product.name}
         categoryLabel={product.categoryLabel}
+        modelUrl={product.modelUrl}
       />
     </>
   );

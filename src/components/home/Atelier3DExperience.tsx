@@ -2,7 +2,9 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { Sparkles, Eye, ShieldCheck, Scissors } from "lucide-react";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "meshoptimizer";
+import { Sparkles, Eye, ShieldCheck, Footprints, Layers } from "lucide-react";
 import { Product3DModal } from "@/components/ui/Product3DModal";
 
 export function Atelier3DExperience() {
@@ -19,10 +21,15 @@ export function Atelier3DExperience() {
   });
   const animFrameIdRef = useRef<number | null>(null);
 
+  const [activeTab, setActiveTab] = useState<"sneaker" | "suit">("sneaker");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoadingModel, setIsLoadingModel] = useState(false);
 
+  // Inicialização e recarregamento da cena ao alternar activeTab
   useEffect(() => {
     if (!containerRef.current) return;
+
+    setIsLoadingModel(true);
 
     const container = containerRef.current;
     const width = container.clientWidth || 500;
@@ -48,19 +55,19 @@ export function Atelier3DExperience() {
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // 4. Iluminação Cinematográfica
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    // 4. Iluminação Cinematográfica de Showroom
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.4);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
     keyLight.position.set(2.5, 3.5, 3);
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xe2e8f0, 2.8);
+    const rimLight = new THREE.DirectionalLight(0xe2e8f0, 2.6);
     rimLight.position.set(-2.5, 2, -2.5);
     scene.add(rimLight);
 
-    const softBlueFill = new THREE.DirectionalLight(0x38bdf8, 0.5);
+    const softBlueFill = new THREE.DirectionalLight(0x38bdf8, 0.45);
     softBlueFill.position.set(0, -2, 1.5);
     scene.add(softBlueFill);
 
@@ -69,8 +76,71 @@ export function Atelier3DExperience() {
     scene.add(modelGroup);
     modelGroupRef.current = modelGroup;
 
-    // Constrói a alfaiataria em Three.js
-    buildAtelierSuit(modelGroup);
+    if (activeTab === "sneaker") {
+      // Carrega o Air Force 1 GLB
+      const loader = new GLTFLoader();
+      loader.setMeshoptDecoder(MeshoptDecoder);
+      loader.load(
+        "/models/air-force-1.glb",
+        (gltf) => {
+          const model = gltf.scene;
+
+          // Aplicação de materiais PBR de couro branco natural e metal
+          model.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+              const mesh = child as THREE.Mesh;
+              mesh.castShadow = true;
+              mesh.receiveShadow = true;
+
+              const matName = (mesh.material as any)?.name || "";
+              if (matName.includes("Metal") || matName.includes("Degradable")) {
+                mesh.material = new THREE.MeshStandardMaterial({
+                  color: 0xd4d4d8,
+                  metalness: 0.95,
+                  roughness: 0.18,
+                });
+              } else if (matName.includes("Fabric") || matName.includes("Cloth")) {
+                mesh.material = new THREE.MeshStandardMaterial({
+                  color: 0xf4f4f5,
+                  roughness: 0.75,
+                  metalness: 0.02,
+                });
+              } else {
+                mesh.material = new THREE.MeshStandardMaterial({
+                  color: 0xfafafc,
+                  roughness: 0.52,
+                  metalness: 0.04,
+                });
+              }
+            }
+          });
+
+          const box = new THREE.Box3().setFromObject(model);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3());
+          const maxAxis = Math.max(size.x, size.y, size.z);
+
+          const scaleFactor = 2.4 / maxAxis;
+          model.scale.multiplyScalar(scaleFactor);
+          model.position.sub(center.multiplyScalar(scaleFactor));
+          model.rotation.y = Math.PI * 0.3;
+          model.rotation.x = 0.08;
+
+          modelGroup.add(model);
+          setIsLoadingModel(false);
+        },
+        undefined,
+        (err) => {
+          console.warn("Falha no modelo sneaker, fallback:", err);
+          buildAtelierSuit(modelGroup);
+          setIsLoadingModel(false);
+        }
+      );
+    } else {
+      // Carrega Alfaiataria contemporânea
+      buildAtelierSuit(modelGroup);
+      setIsLoadingModel(false);
+    }
 
     // 6. Rastreamento do mouse para parallax elástico
     const handleMouseMove = (e: MouseEvent) => {
@@ -89,25 +159,30 @@ export function Atelier3DExperience() {
     container.addEventListener("mousemove", handleMouseMove, { passive: true });
     container.addEventListener("mouseleave", handleMouseLeave, { passive: true });
 
-    // 7. Loop de Animação com respiração e rotação suave
+    // 7. Loop de Animação com flutuação e rotação suave
     let clock = new THREE.Clock();
 
     const animate = () => {
       animFrameIdRef.current = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Interpolação suave em direção ao mouse (Lerp)
+      // Interpolação elástica em direção ao mouse (Lerp)
       const mouse = mouseRef.current;
       mouse.x += (mouse.targetX - mouse.x) * 0.08;
       mouse.y += (mouse.targetY - mouse.y) * 0.08;
 
       if (modelGroup) {
-        // Flutuação orgânica sutil (respiração)
+        // Flutuação orgânica sutil
         modelGroup.position.y = Math.sin(elapsedTime * 1.5) * 0.06;
 
         // Rotação suave baseada no mouse + rotação base contínua
-        modelGroup.rotation.y = mouse.x * 0.8 + Math.sin(elapsedTime * 0.5) * 0.15;
-        modelGroup.rotation.x = -mouse.y * 0.5;
+        if (activeTab === "sneaker") {
+          modelGroup.rotation.y = Math.PI * 0.3 + mouse.x * 0.9 + Math.sin(elapsedTime * 0.6) * 0.15;
+          modelGroup.rotation.x = 0.08 - mouse.y * 0.45;
+        } else {
+          modelGroup.rotation.y = mouse.x * 0.8 + Math.sin(elapsedTime * 0.5) * 0.15;
+          modelGroup.rotation.x = -mouse.y * 0.5;
+        }
       }
 
       renderer.render(scene, camera);
@@ -134,7 +209,7 @@ export function Atelier3DExperience() {
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
       renderer.dispose();
     };
-  }, []);
+  }, [activeTab]);
 
   return (
     <section id="atelier-3d" className="py-24 bg-brand-surface relative border-t border-brand-border/40 overflow-hidden select-none">
@@ -144,44 +219,109 @@ export function Atelier3DExperience() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          {/* Lado Esquerdo: Conceito Editorial & Diferenciais */}
+          {/* Lado Esquerdo: Conceito Editorial & Seletor de Categoria */}
           <div className="lg:col-span-6 flex flex-col justify-center">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-6 h-[1px] bg-brand-silver"></span>
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-silver flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-brand-white" />
-                Black Store Lab • 3D Experience
-              </span>
-            </div>
-
-            <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white leading-tight mb-6 text-balance">
-              Engenharia Têxtil.
-              <br />
-              <span className="text-brand-silver">Corte Sob Medida em 3D.</span>
-            </h2>
-
-            <p className="text-brand-silver/90 text-sm sm:text-base leading-relaxed mb-8 text-pretty">
-              Conheça a precisão milimétrica da nossa alfaiataria contemporânea. Mova o cursor ou arraste a tela para inspecionar a modelagem, a queda do tecido e a imponência da peça sob todos os ângulos.
-            </p>
-
-            {/* Pilares Técnicos */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 pt-6 border-t border-brand-border/50">
-              <div className="flex items-start gap-3">
-                <Scissors className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-xs uppercase font-bold text-brand-white">Ombro Estruturado</h3>
-                  <p className="text-xs text-brand-silver/70 mt-0.5">Alinhamento anatômico que valoriza a postura masculina.</p>
-                </div>
+            
+            {/* Tag e Alternador de Demonstração */}
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-[1px] bg-brand-silver"></span>
+                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-silver flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-brand-white" />
+                  Black Store Lab • 3D Realtime
+                </span>
               </div>
 
-              <div className="flex items-start gap-3">
-                <ShieldCheck className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-xs uppercase font-bold text-brand-white">Tecidos Nobres</h3>
-                  <p className="text-xs text-brand-silver/70 mt-0.5">Lã fria e fios de alto padrão com toque suave e acabamento acetinado.</p>
-                </div>
+              {/* Botões de Alternância de Modelo */}
+              <div className="flex items-center p-1 bg-brand-black/80 border border-white/10 rounded-full">
+                <button
+                  onClick={() => setActiveTab("sneaker")}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider transition-all duration-200 ${
+                    activeTab === "sneaker"
+                      ? "bg-brand-white text-brand-black shadow-md"
+                      : "text-brand-silver hover:text-white"
+                  }`}
+                >
+                  <Footprints className="w-3.5 h-3.5" />
+                  Sneaker Air Force
+                </button>
+                <button
+                  onClick={() => setActiveTab("suit")}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider transition-all duration-200 ${
+                    activeTab === "suit"
+                      ? "bg-brand-white text-brand-black shadow-md"
+                      : "text-brand-silver hover:text-white"
+                  }`}
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  Alfaiataria Black
+                </button>
               </div>
             </div>
+
+            {activeTab === "sneaker" ? (
+              <>
+                <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white leading-tight mb-6 text-balance">
+                  Streetwear Lab.
+                  <br />
+                  <span className="text-brand-silver">Sneaker Air Force 3D.</span>
+                </h2>
+
+                <p className="text-brand-silver/90 text-sm sm:text-base leading-relaxed mb-8 text-pretty">
+                  Inspecione o clássico sneaker em couro nobre all-white sob qualquer perspectiva. Mova o cursor para interagir com a peça em tempo real com renderização física PBR fiel aos detalhes de solado, costuras e dubrae metálico.
+                </p>
+
+                {/* Pilares Técnicos do Sneaker */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 pt-6 border-t border-brand-border/50">
+                  <div className="flex items-start gap-3">
+                    <Footprints className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="text-xs uppercase font-bold text-brand-white">Couro Nobre All-White</h3>
+                      <p className="text-xs text-brand-silver/70 mt-0.5">Estrutura durável, biqueira ventilada e acabamento premium acetinado.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <ShieldCheck className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="text-xs uppercase font-bold text-brand-white">Solado Air Estruturado</h3>
+                      <p className="text-xs text-brand-silver/70 mt-0.5">Amortecimento icônico com tração duradoura para o lifestyle urbano.</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white leading-tight mb-6 text-balance">
+                  Engenharia Têxtil.
+                  <br />
+                  <span className="text-brand-silver">Corte Sob Medida em 3D.</span>
+                </h2>
+
+                <p className="text-brand-silver/90 text-sm sm:text-base leading-relaxed mb-8 text-pretty">
+                  Conheça a precisão milimétrica da nossa alfaiataria contemporânea. Mova o cursor ou arraste a tela para inspecionar a modelagem, a queda do tecido e a imponência da peça sob todos os ângulos.
+                </p>
+
+                {/* Pilares Técnicos da Alfaiataria */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 pt-6 border-t border-brand-border/50">
+                  <div className="flex items-start gap-3">
+                    <Layers className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="text-xs uppercase font-bold text-brand-white">Ombro Estruturado</h3>
+                      <p className="text-xs text-brand-silver/70 mt-0.5">Alinhamento anatômico que valoriza a postura masculina contemporânea.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <ShieldCheck className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="text-xs uppercase font-bold text-brand-white">Lã Fria e Fios Nobres</h3>
+                      <p className="text-xs text-brand-silver/70 mt-0.5">Toque suave, caimento fluido e alta resistência a vincos indesejados.</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Botão de Abertura do Modal 360° Completo */}
             <div className="flex items-center gap-4">
@@ -202,8 +342,15 @@ export function Atelier3DExperience() {
               {/* Badge 3D Interativo */}
               <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-black/75 border border-white/10 backdrop-blur-md text-[10px] uppercase tracking-widest text-brand-silver pointer-events-none">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>3D Interativo • Mova o mouse</span>
+                <span>3D Interativo • Mova o cursor</span>
               </div>
+
+              {/* Indicador de Carregamento sutil */}
+              {isLoadingModel && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-brand-black/50 backdrop-blur-sm rounded-2xl">
+                  <div className="w-6 h-6 border-2 border-brand-silver/30 border-t-brand-white rounded-full animate-spin" />
+                </div>
+              )}
 
               {/* Elemento de Canvas Three.js */}
               <div
@@ -232,8 +379,15 @@ export function Atelier3DExperience() {
       <Product3DModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        productName="Terno Sob Medida Black Edition"
-        categoryLabel="Alfaiataria Contemporânea"
+        productName={
+          activeTab === "sneaker"
+            ? "Sneaker Air Force Streetwear Branco"
+            : "Terno Sob Medida Black Edition"
+        }
+        categoryLabel={
+          activeTab === "sneaker" ? "Tênis & Sneakers" : "Alfaiataria Contemporânea"
+        }
+        modelUrl={activeTab === "sneaker" ? "/models/air-force-1.glb" : undefined}
       />
     </section>
   );

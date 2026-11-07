@@ -3,13 +3,14 @@ import { ProductItem } from "@/types";
 export const productsData: ProductItem[] = [
   {
     id: "prod-1",
-    name: "Sneaker Streetwear Monochrome",
+    name: "Sneaker Streetwear Couro Branco",
     category: "tenis",
     categoryLabel: "Tênis",
-    description: "Design arrojado com acabamento nobuck e solado estruturado para máxima presença urbana.",
-    image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=70",
-    isDemo: true,
-    highlightBadge: "Destaque",
+    description: "Couro legítimo com acabamento premium all-white, perfurações de respiração e solado com amortecimento icônico.",
+    image: "/products/air-force-white.jpg",
+    isDemo: false,
+    highlightBadge: "Modelo 3D 360°",
+    modelUrl: "/models/air-force-1.glb",
   },
   {
     id: "prod-2",
