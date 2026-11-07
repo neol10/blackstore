@@ -84,6 +84,8 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/logo.jpg?v=2" type="image/jpeg" />
         <link rel="apple-touch-icon" href="/logo.jpg?v=2" />
+        <link rel="preload" href="/media/hero-poster.jpg" as="image" type="image/jpeg" />
+        <link rel="preload" href="/media/hero-banner.mp4" as="video" type="video/mp4" />
       </head>
       <body className="bg-brand-black text-brand-offwhite font-sans antialiased selection:bg-brand-offwhite selection:text-brand-black min-h-screen flex flex-col">
         {children}

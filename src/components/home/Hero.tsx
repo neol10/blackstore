@@ -41,7 +41,7 @@ export function Hero() {
     return () => clearInterval(interval);
   }, []);
 
-  // Inicialização infalível do vídeo em qualquer navegador
+  // Inicialização imediata do vídeo em qualquer navegador sem esperas de buffer
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -50,22 +50,19 @@ export function Hero() {
     video.defaultMuted = true;
     video.playsInline = true;
 
-    const startPlaying = () => {
+    // Dispara play no primeiro milissegundo
+    const playVideo = () => {
       const promise = video.play();
       if (promise !== undefined) {
         promise.catch(() => {});
       }
     };
 
-    if (video.readyState >= 2) {
-      startPlaying();
-    } else {
-      video.addEventListener("loadeddata", startPlaying, { once: true });
-      video.addEventListener("canplay", startPlaying, { once: true });
-    }
+    playVideo();
 
+    // Fallback garantido ao primeiro toque ou clique se o navegador bloquear autoplay
     const unlock = () => {
-      startPlaying();
+      playVideo();
       ["touchstart", "pointerdown", "click", "scroll"].forEach((ev) =>
         window.removeEventListener(ev, unlock)
       );
@@ -116,19 +113,20 @@ export function Hero() {
       id="inicio"
       className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden bg-brand-black select-none pt-24 pb-12 sm:pt-28 sm:pb-16"
     >
-      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO COM BLUR EQUILIBRADO E CONTRASTE PREMIUM */}
+      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO COM STREAMING IMEDIATO E BLUR EQUILIBRADO */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <video
           ref={videoRef}
-          src="/media/hero-banner.mp4"
-          poster="/media/hero-poster.jpg"
           autoPlay
           muted
           loop
           playsInline
           preload="auto"
+          poster="/media/hero-poster.jpg"
           className="w-full h-full object-cover object-[center_35%] sm:object-[center_30%] filter blur-[3px] scale-105 brightness-[0.76] contrast-[1.08]"
-        />
+        >
+          <source src="/media/hero-banner.mp4" type="video/mp4" />
+        </video>
 
         {/* Gradiente sutil focado na coluna de texto (esquerda), preservando o homem de terno e a vitrine à direita */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-transparent pointer-events-none" />
@@ -137,7 +135,7 @@ export function Hero() {
         <div className="absolute inset-x-0 bottom-0 h-32 sm:h-40 bg-gradient-to-t from-brand-surface via-brand-surface/60 to-transparent pointer-events-none" />
       </div>
 
-      {/* 2. CONTEÚDO PRINCIPAL COM ANIMAÇÕES CINEMATOGRÁFICAS VIVAS */}
+      {/* 2. CONTEÚDO PRINCIPAL COM ANIMAÇÃO NATIVA INSTANTÂNEA SUB-400MS */}
       <div
         className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto pointer-events-auto"
         style={{
@@ -147,14 +145,8 @@ export function Hero() {
         }}
       >
         <div className="max-w-2xl lg:max-w-3xl overflow-visible">
-          {/* Badge Dinâmico: Entra da esquerda para a direita imediatamente */}
-          <div
-            className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-brand-black/85 border border-white/20 backdrop-blur-xl mb-6 shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              hasLoaded
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 -translate-x-20 sm:-translate-x-32"
-            }`}
-          >
+          {/* Badge Dinâmico: Entra da esquerda no milissegundo 0 */}
+          <div className="hero-fast-badge inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-brand-black/85 border border-white/20 backdrop-blur-xl mb-6 shadow-2xl">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
@@ -168,14 +160,8 @@ export function Hero() {
             </span>
           </div>
 
-          {/* Título Principal: Entra da esquerda para a direita com ritmo rápido */}
-          <h1
-            className={`font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-5 sm:mb-6 drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] text-balance transition-all duration-500 delay-75 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              hasLoaded
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 -translate-x-24 sm:-translate-x-44"
-            }`}
-          >
+          {/* Título Principal: Entra da esquerda em 0.12s */}
+          <h1 className="hero-fast-title font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-5 sm:mb-6 drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] text-balance">
             <span className="text-white block drop-shadow-lg tracking-tight">
               Seu Estilo.
             </span>
@@ -195,26 +181,14 @@ export function Hero() {
             </span>
           </h1>
 
-          {/* Subtítulo: Entra da esquerda para a direita */}
-          <p
-            className={`text-sm sm:text-base lg:text-xl text-brand-offwhite max-w-xl font-normal leading-relaxed mb-6 sm:mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-pretty transition-all duration-500 delay-150 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              hasLoaded
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 -translate-x-20 sm:-translate-x-36"
-            }`}
-          >
+          {/* Subtítulo: Entra da esquerda em 0.2s */}
+          <p className="hero-fast-sub text-sm sm:text-base lg:text-xl text-brand-offwhite max-w-xl font-normal leading-relaxed mb-6 sm:mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-pretty">
             Moda masculina para quem valoriza estilo, conforto e presença marcante.
             Do casual contemporâneo à alfaiataria de corte preciso e peças esportivas exclusivas.
           </p>
 
-          {/* Botões de Ação com Efeito Shimmer e Entrada Rápida da Esquerda */}
-          <div
-            className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 relative z-30 transition-all duration-500 delay-225 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              hasLoaded
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 -translate-x-16 sm:-translate-x-28"
-            }`}
-          >
+          {/* Botões de Ação com Efeito Shimmer: Entram em 0.28s */}
+          <div className="hero-fast-buttons flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 relative z-30">
             <a
               href="#colecoes"
               className="relative group overflow-hidden inline-flex items-center justify-center px-7 py-3.5 sm:px-8 sm:py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver hover:scale-[1.02] active:scale-[0.98] transition-[transform,background-color,color] duration-200 shadow-2xl focus:outline-none focus:ring-2 focus:ring-brand-silver text-center select-none"
@@ -235,14 +209,8 @@ export function Hero() {
             </a>
           </div>
 
-          {/* Micro informativos com Entrada da Esquerda */}
-          <div
-            className={`hidden sm:grid grid-cols-3 gap-6 pt-8 mt-8 border-t border-brand-border/40 text-left transition-all duration-500 delay-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-              hasLoaded
-                ? "opacity-100 translate-x-0"
-                : "opacity-0 -translate-x-14 sm:-translate-x-24"
-            }`}
-          >
+          {/* Micro informativos: Entram em 0.35s */}
+          <div className="hero-fast-footer hidden sm:grid grid-cols-3 gap-6 pt-8 mt-8 border-t border-brand-border/40 text-left">
             <div className="group/item p-2 -m-2 rounded transition-colors hover:bg-white/5">
               <p className="text-[10px] uppercase font-mono tracking-widest text-brand-muted group-hover/item:text-brand-silver transition-colors">
                 Conceito

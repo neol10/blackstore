@@ -263,3 +263,42 @@ html {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+/* ============================================================== */
+/* ENTRADA RÁPIDA DO HERO (ZERO ESPERA DE HIDRATAÇÃO - SUB-400MS) */
+/* ============================================================== */
+@keyframes hero-enter-left {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.hero-fast-badge {
+  animation: hero-enter-left 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.05s;
+}
+
+.hero-fast-title {
+  animation: hero-enter-left 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.12s;
+}
+
+.hero-fast-sub {
+  animation: hero-enter-left 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.2s;
+}
+
+.hero-fast-buttons {
+  animation: hero-enter-left 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.28s;
+}
+
+.hero-fast-footer {
+  animation: hero-enter-left 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.35s;
+}
