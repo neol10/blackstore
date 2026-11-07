@@ -32,18 +32,18 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
           
           {/* Left Column: Asymmetrical Editorial Photography */}
           <div className="lg:col-span-7 grid grid-cols-12 gap-4">
-            <div className="col-span-8 relative h-[380px] sm:h-[480px] overflow-hidden border border-brand-border/60">
+            <div className="col-span-8 relative h-[380px] sm:h-[480px] overflow-hidden border border-brand-border/60 bg-brand-surface">
               <Image
-                src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=700&q=70"
-                alt="Moda esportiva e paixão pelo futebol"
+                src="/catalog/futebol/real.webp"
+                alt="Manto Real Madrid e moda esportiva Black Store"
                 fill
                 sizes="(max-width: 1024px) 70vw, 40vw"
-                className="object-cover object-center filter grayscale-[20%] brightness-90 hover:scale-105 transition-transform duration-700"
+                className="object-cover object-center filter contrast-[1.03] brightness-95 hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent pointer-events-none" />
               <div className="absolute bottom-6 left-6 right-6">
-                <span className="text-[10px] uppercase font-mono tracking-widest text-brand-silver">
-                  Edição Especial
+                <span className="text-[10px] uppercase font-mono tracking-widest text-emerald-400">
+                  Mantos Importados
                 </span>
                 <p className="font-display text-xl sm:text-2xl font-bold uppercase text-brand-white mt-1">
                   Atitude nos Gramados e nas Ruas
@@ -52,13 +52,13 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
             </div>
 
             <div className="col-span-4 flex flex-col gap-4">
-              <div className="relative h-[180px] sm:h-[230px] overflow-hidden border border-brand-border/60">
+              <div className="relative h-[180px] sm:h-[230px] overflow-hidden border border-brand-border/60 bg-brand-surface">
                 <Image
-                  src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80"
-                  alt="Detalhe de vestuário esportivo urbano"
+                  src="/catalog/futebol/barcelona.webp"
+                  alt="Manto Barcelona Black Store"
                   fill
                   sizes="(max-width: 1024px) 30vw, 20vw"
-                  className="object-cover filter brightness-85"
+                  className="object-cover object-center filter contrast-[1.03] brightness-95 hover:scale-105 transition-transform duration-500"
                 />
               </div>
 

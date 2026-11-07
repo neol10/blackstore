@@ -30,6 +30,7 @@ yarn-error.log*
 *.zip
 video banner.mp4
 homem de terno*
+catalogo blackstore/
 
 # vercel
 .vercel

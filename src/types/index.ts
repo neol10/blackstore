@@ -5,7 +5,8 @@ export type ProductCategory =
   | "esportivo"
   | "bermudas"
   | "moletons"
-  | "casual-social";
+  | "casual-social"
+  | "acessorios";
 
 export interface CategoryItem {
   id: ProductCategory;

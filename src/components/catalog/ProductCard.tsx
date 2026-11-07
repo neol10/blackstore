@@ -118,11 +118,11 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         {/* ============================================================== */}
         {/* CONTAINER DA IMAGEM */}
         {/* - Para Roupas: Oscilação pendular suave do cabide no hover */}
-        {/* - Para Sneakers: Elevação e apoio sobre prateleira */}
+        {/* - Para Sneakers: Prateleira de Sneaker Shop com Spotlight e Sombra */}
         {/* ============================================================== */}
         <div
           onClick={() => setIsDetailOpen(true)}
-          className={`relative aspect-[3/4] w-full bg-brand-black overflow-hidden ring-1 ring-inset ring-white/10 cursor-pointer ${
+          className={`relative aspect-[3/4] w-full bg-gradient-to-b from-[#141418] via-[#0d0d10] to-[#070709] overflow-hidden ring-1 ring-inset ring-white/10 cursor-pointer ${
             !isSneaker ? "animate-hanger-swing" : ""
           }`}
         >
@@ -130,22 +130,27 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           {isSneaker && (
             <>
               {/* Feixe Cônico Superior de Luz que acende no hover */}
-              <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
               
               {/* Brilho radial no centro do tênis */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-radial from-white/15 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none blur-xl z-10" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-52 h-52 bg-white/15 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none blur-2xl z-10" />
+
+              {/* Sombra de Contato projetada na base da prateleira */}
+              <div className="absolute bottom-5 left-1/2 -translate-x-1/2 w-44 h-3 bg-black/80 blur-md rounded-full pointer-events-none z-10 transition-all duration-500 group-hover:scale-90 group-hover:opacity-50" />
             </>
           )}
 
-          {/* Fotografia da Peça com escala suave */}
+          {/* Fotografia da Peça */}
           <Image
             src={product.image}
             alt={`Fotografia de ${product.name}`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className={`object-cover object-center filter contrast-[1.02] brightness-95 transition-all duration-500 ease-out group-hover:scale-105 ${
-              isSneaker ? "group-hover:-translate-y-1.5" : ""
-            }`}
+            className={`${
+              isSneaker
+                ? "object-contain p-6 filter drop-shadow-[0_12px_14px_rgba(0,0,0,0.7)] group-hover:drop-shadow-[0_18px_20px_rgba(0,0,0,0.85)] group-hover:-translate-y-2 group-hover:scale-105"
+                : "object-cover object-center filter contrast-[1.02] brightness-95 group-hover:scale-105"
+            } transition-all duration-500 ease-out`}
             priority={index < 4}
           />
 
@@ -173,14 +178,14 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           {/* ============================================================ */}
           {isSneaker && (
             <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none">
-              {/* Superfície superior da prateleira com iluminação LED */}
-              <div className="relative h-[5px] bg-gradient-to-r from-transparent via-white/80 to-transparent shadow-[0_0_15px_rgba(255,255,255,0.7)] group-hover:shadow-[0_0_22px_rgba(255,255,255,0.95)] transition-shadow duration-300" />
-              {/* Chanfro da prateleira metálica fosca */}
-              <div className="h-2.5 bg-gradient-to-b from-[#1c1c22] to-[#0d0d10] border-t border-white/20 flex items-center justify-between px-3">
-                <span className="text-[7px] uppercase tracking-[0.2em] text-brand-silver/60 font-mono">
-                  Shelf • Gallery
+              {/* Linha de reflexo / neon da prateleira */}
+              <div className="relative h-[3px] bg-gradient-to-r from-transparent via-white/90 to-transparent shadow-[0_0_15px_rgba(255,255,255,0.8)] group-hover:shadow-[0_0_24px_rgba(255,255,255,1)] transition-shadow duration-300" />
+              {/* Prateleira chanfrada estilo boutique */}
+              <div className="h-3 bg-gradient-to-b from-[#202026] to-[#0c0c0e] border-t border-white/30 flex items-center justify-between px-3">
+                <span className="text-[7px] uppercase tracking-[0.25em] text-brand-silver/80 font-mono">
+                  Display • Acrílico & LED
                 </span>
-                <span className="w-1 h-1 rounded-full bg-emerald-400 group-hover:animate-ping" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 group-hover:animate-ping" />
               </div>
             </div>
           )}

@@ -30,6 +30,8 @@ export function ProductGrid({
     if (presentCategories.has("moletons")) list.push({ id: "moletons", label: "Moletons" });
     if (presentCategories.has("casual-social"))
       list.push({ id: "casual-social", label: "Casual & Social" });
+    if (presentCategories.has("acessorios"))
+      list.push({ id: "acessorios", label: "Acessórios & Relógios" });
 
     return list;
   }, [products]);
