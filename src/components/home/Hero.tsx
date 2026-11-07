@@ -86,7 +86,7 @@ export function Hero() {
       id="inicio"
       className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden bg-brand-black select-none pt-24 pb-12 sm:pt-28 sm:pb-16"
     >
-      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO (100% QUALIDADE PURA ORIGINAL DO ARQUIVO) */}
+      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO COM BLUR E TONALIDADE ESCURA PARA MÁXIMA LEGIBILIDADE */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <video
           ref={videoRef}
@@ -97,14 +97,17 @@ export function Hero() {
           loop
           playsInline
           preload="auto"
-          className="w-full h-full object-cover object-[center_35%] sm:object-[center_30%]"
+          className="w-full h-full object-cover object-[center_35%] sm:object-[center_30%] filter blur-[5px] scale-110 brightness-[0.60] contrast-[1.05]"
         />
 
-        {/* Gradiente sutil à esquerda para proteger o texto, mantendo 100% da vivacidade e nitidez original do vídeo no centro e na vitrine */}
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-black/70 via-brand-black/35 to-transparent pointer-events-none" />
+        {/* Camada uniforme de escurecimento com backdrop-blur para contraste refinado */}
+        <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px] pointer-events-none" />
+
+        {/* Gradiente direcional escuro para destacar as frases e botões */}
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-black/90 via-brand-black/60 to-black/40 pointer-events-none" />
 
         {/* Fusão inferior direta com as coleções */}
-        <div className="absolute inset-x-0 bottom-0 h-32 sm:h-44 bg-gradient-to-t from-brand-surface via-brand-surface/75 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 bottom-0 h-36 sm:h-48 bg-gradient-to-t from-brand-surface via-brand-surface/85 to-transparent pointer-events-none" />
       </div>
 
       {/* 2. CONTEÚDO PRINCIPAL (LIMPO E ELEGANTE NO CELULAR, COMPLETO NO COMPUTADOR) */}
