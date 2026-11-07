@@ -20,21 +20,23 @@ export function Hero() {
   const [isWordAnimating, setIsWordAnimating] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
 
-  // Gatilho de entrada escalonada dos textos ao carregar
+  // Gatilho imediato de entrada das frases da esquerda para a direita
   useEffect(() => {
-    const timer = setTimeout(() => setHasLoaded(true), 100);
-    return () => clearTimeout(timer);
+    const frameId = requestAnimationFrame(() => {
+      setHasLoaded(true);
+    });
+    return () => cancelAnimationFrame(frameId);
   }, []);
 
-  // Rotação suave de palavras no título com animação fluida
+  // Rotação suave de palavras no título com animação fluida (deslizando da esquerda)
   useEffect(() => {
     const interval = setInterval(() => {
       setIsWordAnimating(true);
       setTimeout(() => {
         setCurrentWordIdx((prev) => (prev + 1) % rotatingWords.length);
         setIsWordAnimating(false);
-      }, 400);
-    }, 3600);
+      }, 280);
+    }, 3200);
 
     return () => clearInterval(interval);
   }, []);
@@ -144,13 +146,13 @@ export function Hero() {
           willChange: "transform, opacity",
         }}
       >
-        <div className="max-w-2xl lg:max-w-3xl">
-          {/* Badge Dinâmico: Alerta de Loja Aberta + Drop (Novo posicionamento perfeitamente harmonizado) */}
+        <div className="max-w-2xl lg:max-w-3xl overflow-visible">
+          {/* Badge Dinâmico: Entra da esquerda para a direita imediatamente */}
           <div
-            className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-brand-black/85 border border-white/20 backdrop-blur-xl mb-6 shadow-2xl transition-all duration-700 ease-out ${
+            className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-brand-black/85 border border-white/20 backdrop-blur-xl mb-6 shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               hasLoaded
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 -translate-y-4"
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-20 sm:-translate-x-32"
             }`}
           >
             <span className="relative flex h-2 w-2">
@@ -166,26 +168,26 @@ export function Hero() {
             </span>
           </div>
 
-          {/* Título Principal com Animação e Rotação de Palavras */}
+          {/* Título Principal: Entra da esquerda para a direita com ritmo rápido */}
           <h1
-            className={`font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-5 sm:mb-6 drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] text-balance transition-all duration-700 delay-150 ease-out ${
+            className={`font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-5 sm:mb-6 drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] text-balance transition-all duration-500 delay-75 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               hasLoaded
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-6"
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-24 sm:-translate-x-44"
             }`}
           >
             <span className="text-white block drop-shadow-lg tracking-tight">
               Seu Estilo.
             </span>
             
-            {/* Linha Dinâmica com Transição de Palavras */}
+            {/* Linha Dinâmica com Transição de Palavras da esquerda para direita */}
             <span className="relative inline-block h-[1.1em] overflow-hidden align-bottom">
               <span
                 key={currentWordIdx}
-                className={`inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-white via-zinc-100 to-brand-silver drop-shadow-md transition-all duration-500 ease-out ${
+                className={`inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-white via-zinc-100 to-brand-silver drop-shadow-md transition-all duration-300 ease-out ${
                   isWordAnimating
-                    ? "opacity-0 -translate-y-6 scale-95 blur-sm"
-                    : "opacity-100 translate-y-0 scale-100 blur-0"
+                    ? "opacity-0 -translate-x-8 blur-sm scale-95"
+                    : "opacity-100 translate-x-0 blur-0 scale-100"
                 }`}
               >
                 {rotatingWords[currentWordIdx]}
@@ -193,24 +195,24 @@ export function Hero() {
             </span>
           </h1>
 
-          {/* Subtítulo com Fade Suave */}
+          {/* Subtítulo: Entra da esquerda para a direita */}
           <p
-            className={`text-sm sm:text-base lg:text-xl text-brand-offwhite max-w-xl font-normal leading-relaxed mb-6 sm:mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-pretty transition-all duration-700 delay-300 ease-out ${
+            className={`text-sm sm:text-base lg:text-xl text-brand-offwhite max-w-xl font-normal leading-relaxed mb-6 sm:mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-pretty transition-all duration-500 delay-150 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               hasLoaded
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-6"
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-20 sm:-translate-x-36"
             }`}
           >
             Moda masculina para quem valoriza estilo, conforto e presença marcante.
             Do casual contemporâneo à alfaiataria de corte preciso e peças esportivas exclusivas.
           </p>
 
-          {/* Botões de Ação com Efeito Shimmer */}
+          {/* Botões de Ação com Efeito Shimmer e Entrada Rápida da Esquerda */}
           <div
-            className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 relative z-30 transition-all duration-700 delay-450 ease-out ${
+            className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 relative z-30 transition-all duration-500 delay-225 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               hasLoaded
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-6"
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-16 sm:-translate-x-28"
             }`}
           >
             <a
@@ -233,12 +235,12 @@ export function Hero() {
             </a>
           </div>
 
-          {/* Micro informativos com Hover Interativo */}
+          {/* Micro informativos com Entrada da Esquerda */}
           <div
-            className={`hidden sm:grid grid-cols-3 gap-6 pt-8 mt-8 border-t border-brand-border/40 text-left transition-all duration-700 delay-600 ease-out ${
+            className={`hidden sm:grid grid-cols-3 gap-6 pt-8 mt-8 border-t border-brand-border/40 text-left transition-all duration-500 delay-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
               hasLoaded
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-6"
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-14 sm:-translate-x-24"
             }`}
           >
             <div className="group/item p-2 -m-2 rounded transition-colors hover:bg-white/5">

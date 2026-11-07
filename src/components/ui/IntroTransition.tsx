@@ -10,11 +10,11 @@ export function IntroTransition() {
     // Trava scroll apenas durante a execução da animação de entrada
     document.body.style.overflow = "hidden";
 
-    // Libera a página após o término exato da animação CSS nativa
+    // Libera a página rapidamente após a animação de entrada de alto impacto
     const timer = setTimeout(() => {
       setIsCompleted(true);
       document.body.style.overflow = "";
-    }, 1150);
+    }, 680);
 
     return () => {
       clearTimeout(timer);

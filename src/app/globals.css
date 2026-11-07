@@ -142,25 +142,25 @@ html {
 
 .door-animate-left {
   will-change: transform;
-  -webkit-animation: door-left-open 1.1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-  animation: door-left-open 1.1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  -webkit-animation: door-left-open 0.65s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  animation: door-left-open 0.65s cubic-bezier(0.77, 0, 0.175, 1) forwards;
 }
 
 .door-animate-right {
   will-change: transform;
-  -webkit-animation: door-right-open 1.1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-  animation: door-right-open 1.1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  -webkit-animation: door-right-open 0.65s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  animation: door-right-open 0.65s cubic-bezier(0.77, 0, 0.175, 1) forwards;
 }
 
 .door-animate-emblem {
   will-change: transform, opacity;
-  -webkit-animation: door-emblem-reveal 1.1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-  animation: door-emblem-reveal 1.1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  -webkit-animation: door-emblem-reveal 0.65s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  animation: door-emblem-reveal 0.65s cubic-bezier(0.77, 0, 0.175, 1) forwards;
 }
 
 .door-animate-slit {
-  -webkit-animation: door-slit-reveal 1.1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
-  animation: door-slit-reveal 1.1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  -webkit-animation: door-slit-reveal 0.65s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  animation: door-slit-reveal 0.65s cubic-bezier(0.77, 0, 0.175, 1) forwards;
 }
 
 /* Efeito Físico: Balanço Pendular de Cabide para Roupas & Calças */
