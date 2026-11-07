@@ -215,6 +215,27 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             <p className="mt-2 text-xs text-brand-silver/80 line-clamp-2 leading-relaxed text-pretty">
               {product.description}
             </p>
+
+            {/* Barra de Escassez: Drop Limitado */}
+            {product.limitedStock && (
+              <div className="mt-3 pt-2.5 border-t border-brand-border/40">
+                <div className="flex items-center justify-between text-[10px] uppercase font-bold tracking-wider text-amber-400 mb-1.5">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                    Drop Limitado
+                  </span>
+                  <span className="text-[9px] font-mono font-semibold text-amber-300">
+                    Restam {product.limitedStock} unid.
+                  </span>
+                </div>
+                <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-amber-500 to-amber-300 rounded-full"
+                    style={{ width: `${Math.min(product.limitedStock * 25, 100)}%` }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Botões de Ação */}

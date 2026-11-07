@@ -114,6 +114,19 @@ export function ProductDetailModal({ isOpen, onClose, product }: ProductDetailMo
               {product.name}
             </h2>
 
+            {/* Alerta de Drop Limitado no Modal */}
+            {product.limitedStock && (
+              <div className="mb-4 p-3 rounded-lg bg-amber-400/10 border border-amber-400/30 flex items-center justify-between">
+                <span className="text-[11px] uppercase font-bold tracking-wider text-amber-400 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                  Peça de Edição Limitada
+                </span>
+                <span className="text-xs font-mono font-bold text-amber-300">
+                  Apenas {product.limitedStock} no estoque físico
+                </span>
+              </div>
+            )}
+
             <div className="space-y-4 text-xs sm:text-sm text-brand-silver/90 leading-relaxed pt-3 border-t border-brand-border/50">
               <p>{product.description}</p>
 

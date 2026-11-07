@@ -25,4 +25,5 @@ export interface ProductItem {
   isDemo: boolean;
   highlightBadge?: string;
   modelUrl?: string;
+  limitedStock?: number;
 }

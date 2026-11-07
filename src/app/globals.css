@@ -205,3 +205,38 @@ html {
 .animate-shelf-glow {
   animation: shelf-glow-pulse 2.8s ease-in-out infinite;
 }
+
+/* ============================================================== */
+/* ESTILOS: MODO BLACK VIP / VITRINE NOTURNA DE LUXO */
+/* ============================================================== */
+.vip-night-mode {
+  --color-black: #030304;
+  --color-surface: #060608;
+}
+
+.vip-night-mode body {
+  background-color: #030304 !important;
+}
+
+.vip-night-mode .bg-brand-black {
+  background-color: #030304 !important;
+}
+
+.vip-night-mode .bg-brand-surface {
+  background-color: #060608 !important;
+}
+
+.vip-night-mode .bg-brand-card {
+  background-color: #0a0a0f !important;
+  border-color: rgba(251, 191, 36, 0.22) !important;
+  box-shadow: 0 0 25px -8px rgba(251, 191, 36, 0.12);
+}
+
+.vip-night-mode .group:hover {
+  border-color: rgba(251, 191, 36, 0.55) !important;
+  box-shadow: 0 22px 50px -12px rgba(251, 191, 36, 0.22) !important;
+}
+
+.vip-night-mode header {
+  border-bottom-color: rgba(251, 191, 36, 0.25) !important;
+}

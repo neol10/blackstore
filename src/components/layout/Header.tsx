@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Menu, MessageCircle } from "lucide-react";
+import { Menu, MessageCircle, Sparkles } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { createWhatsAppLink } from "@/lib/whatsapp";
 import { MobileNavigation } from "./MobileNavigation";
@@ -10,6 +10,7 @@ import { MobileNavigation } from "./MobileNavigation";
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isVipMode, setIsVipMode] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +19,16 @@ export function Header() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const toggleVipMode = () => {
+    const nextState = !isVipMode;
+    setIsVipMode(nextState);
+    if (nextState) {
+      document.documentElement.classList.add("vip-night-mode");
+    } else {
+      document.documentElement.classList.remove("vip-night-mode");
+    }
+  };
 
   const navLinks = [
     { label: "Início", href: "#inicio" },
@@ -78,7 +89,21 @@ export function Header() {
           </nav>
 
           {/* Desktop Right CTA */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
+            {/* Botão de Alternância Modo VIP */}
+            <button
+              onClick={toggleVipMode}
+              aria-label="Alternar Modo VIP Vitrine Noturna"
+              className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full border text-[11px] font-semibold uppercase tracking-wider transition-all duration-300 ${
+                isVipMode
+                  ? "bg-amber-400/10 border-amber-400/60 text-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.35)]"
+                  : "bg-white/5 border-white/10 text-brand-silver hover:text-white hover:border-white/30"
+              }`}
+            >
+              <Sparkles className={`w-3.5 h-3.5 ${isVipMode ? "text-amber-300 animate-pulse" : "text-brand-silver"}`} />
+              <span>{isVipMode ? "Modo VIP Ativo" : "Vitrine VIP"}</span>
+            </button>
+
             <a
               href={createWhatsAppLink()}
               target="_blank"
@@ -91,7 +116,19 @@ export function Header() {
           </div>
 
           {/* Mobile Right Controls */}
-          <div className="flex items-center gap-3 lg:hidden">
+          <div className="flex items-center gap-2.5 lg:hidden">
+            <button
+              onClick={toggleVipMode}
+              aria-label="Alternar Modo VIP"
+              className={`p-2 rounded-full border transition-all ${
+                isVipMode
+                  ? "bg-amber-400/15 border-amber-400/60 text-amber-300 shadow-[0_0_10px_rgba(251,191,36,0.3)]"
+                  : "bg-brand-surface border-brand-border text-brand-silver hover:text-white"
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+            </button>
+
             <a
               href={createWhatsAppLink()}
               target="_blank"

@@ -11,6 +11,7 @@ export const productsData: ProductItem[] = [
     isDemo: false,
     highlightBadge: "Destaque Sneaker",
     modelUrl: "/models/air-force-1.glb",
+    limitedStock: 3,
   },
   {
     id: "prod-2",
@@ -20,6 +21,7 @@ export const productsData: ProductItem[] = [
     description: "Algodão 100% penteado de alta gramatura com corte oversized e gola reforçada.",
     image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=70",
     isDemo: true,
+    limitedStock: 4,
   },
   {
     id: "prod-3",
@@ -40,6 +42,7 @@ export const productsData: ProductItem[] = [
     image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=600&q=70",
     isDemo: true,
     highlightBadge: "Inverno",
+    limitedStock: 2,
   },
   {
     id: "prod-5",

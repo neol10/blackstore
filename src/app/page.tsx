@@ -11,6 +11,7 @@ import { AboutStore } from "@/components/home/AboutStore";
 import { StoreGallery } from "@/components/home/StoreGallery";
 import { ContactSection } from "@/components/home/ContactSection";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
+import { BlackStoreRadio } from "@/components/ui/BlackStoreRadio";
 import { IntroTransition } from "@/components/ui/IntroTransition";
 import { productsData } from "@/data/products";
 import { ProductCategory } from "@/types";
@@ -59,6 +60,9 @@ export default function HomePage() {
 
       {/* Floating WhatsApp Action */}
       <WhatsAppButton variant="floating" />
+
+      {/* Rádio Lounge Urbano Black Store */}
+      <BlackStoreRadio />
     </div>
   );
 }
