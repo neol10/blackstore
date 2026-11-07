@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { MeshoptDecoder } from "meshoptimizer";
 import { Sparkles, Eye, ShieldCheck, Footprints, Layers } from "lucide-react";
 import { Product3DModal } from "@/components/ui/Product3DModal";
@@ -55,19 +56,24 @@ export function Atelier3DExperience() {
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // 4. Iluminação Cinematográfica de Showroom
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
+    // 4. Iluminação Cinematográfica com HDRI Environment
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+    const envTexture = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = envTexture;
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.0);
     keyLight.position.set(2.5, 3.5, 3);
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xe2e8f0, 2.6);
+    const rimLight = new THREE.DirectionalLight(0xe2e8f0, 2.2);
     rimLight.position.set(-2.5, 2, -2.5);
     scene.add(rimLight);
 
-    const softBlueFill = new THREE.DirectionalLight(0x38bdf8, 0.45);
+    const softBlueFill = new THREE.DirectionalLight(0x38bdf8, 0.35);
     softBlueFill.position.set(0, -2, 1.5);
     scene.add(softBlueFill);
 
@@ -75,6 +81,23 @@ export function Atelier3DExperience() {
     const modelGroup = new THREE.Group();
     scene.add(modelGroup);
     modelGroupRef.current = modelGroup;
+
+    // Texturas PBR
+    const textureLoader = new THREE.TextureLoader();
+    const leatherNormal = textureLoader.load("/textures/leather/normal.webp");
+    leatherNormal.wrapS = THREE.RepeatWrapping;
+    leatherNormal.wrapT = THREE.RepeatWrapping;
+    leatherNormal.repeat.set(3.5, 3.5);
+
+    const leatherRoughness = textureLoader.load("/textures/leather/roughness.webp");
+    leatherRoughness.wrapS = THREE.RepeatWrapping;
+    leatherRoughness.wrapT = THREE.RepeatWrapping;
+    leatherRoughness.repeat.set(3.5, 3.5);
+
+    const canvasNormal = textureLoader.load("/textures/canvas/normal.webp");
+    canvasNormal.wrapS = THREE.RepeatWrapping;
+    canvasNormal.wrapT = THREE.RepeatWrapping;
+    canvasNormal.repeat.set(5.0, 5.0);
 
     if (activeTab === "sneaker") {
       // Carrega o Air Force 1 GLB
@@ -95,21 +118,34 @@ export function Atelier3DExperience() {
               const matName = (mesh.material as any)?.name || "";
               if (matName.includes("Metal") || matName.includes("Degradable")) {
                 mesh.material = new THREE.MeshStandardMaterial({
-                  color: 0xd4d4d8,
-                  metalness: 0.95,
-                  roughness: 0.18,
+                  color: 0xdcdce0,
+                  metalness: 0.96,
+                  roughness: 0.15,
                 });
               } else if (matName.includes("Fabric") || matName.includes("Cloth")) {
                 mesh.material = new THREE.MeshStandardMaterial({
-                  color: 0xf4f4f5,
-                  roughness: 0.75,
+                  color: 0xffffff,
+                  roughness: 0.78,
+                  metalness: 0.01,
+                  normalMap: canvasNormal,
+                  normalScale: new THREE.Vector2(1.2, 1.2),
+                });
+              } else if (matName.includes("Plane.003") || matName.includes("Material.004") || matName.includes("Material.010")) {
+                mesh.material = new THREE.MeshStandardMaterial({
+                  color: 0xfcfcfd,
+                  roughness: 0.65,
                   metalness: 0.02,
+                  normalMap: leatherNormal,
+                  normalScale: new THREE.Vector2(0.3, 0.3),
                 });
               } else {
                 mesh.material = new THREE.MeshStandardMaterial({
-                  color: 0xfafafc,
-                  roughness: 0.52,
-                  metalness: 0.04,
+                  color: 0xf6f6f8,
+                  roughness: 0.44,
+                  metalness: 0.05,
+                  normalMap: leatherNormal,
+                  normalScale: new THREE.Vector2(0.85, 0.85),
+                  roughnessMap: leatherRoughness,
                 });
               }
             }
@@ -207,6 +243,8 @@ export function Atelier3DExperience() {
       container.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("resize", handleResize);
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
+      pmremGenerator.dispose();
+      envTexture.dispose();
       renderer.dispose();
     };
   }, [activeTab]);

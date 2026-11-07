@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { MeshoptDecoder } from "meshoptimizer";
 import { X, RotateCcw, Play, Pause, MessageCircle, Sparkles } from "lucide-react";
 import { createProductWhatsAppLink } from "@/lib/whatsapp";
@@ -76,28 +77,33 @@ export function Product3DModal({
     controls.maxPolarAngle = Math.PI / 2 + 0.1; // Não deixa ir muito abaixo do chão
     controlsRef.current = controls;
 
-    // 5. Iluminação de Estúdio de Luxo (Key light, Fill light, Rim light)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    // 5. Iluminação de Estúdio Profissional com HDRI Environment
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+    const envTexture = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = envTexture;
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
     // Luz Principal Superior (Realça os ombros e colarinho)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
     keyLight.position.set(3, 4, 3);
     keyLight.castShadow = true;
     scene.add(keyLight);
 
     // Luz de Preenchimento Suave (Evita sombras pretas duras)
-    const fillLight = new THREE.DirectionalLight(0xd1d5db, 1.2);
+    const fillLight = new THREE.DirectionalLight(0xd1d5db, 1.0);
     fillLight.position.set(-3, 1, 2);
     scene.add(fillLight);
 
-    // Luz de Contra-luz / Rim Light (Realça a silhueta da roupa no fundo escuro)
-    const rimLight = new THREE.DirectionalLight(0xe5e7eb, 2.5);
+    // Luz de Contra-luz / Rim Light (Realça a silhueta da peça no fundo escuro)
+    const rimLight = new THREE.DirectionalLight(0xe5e7eb, 2.0);
     rimLight.position.set(0, 3, -3);
     scene.add(rimLight);
 
     // Luz Inferior Suave
-    const bottomLight = new THREE.DirectionalLight(0x38bdf8, 0.4);
+    const bottomLight = new THREE.DirectionalLight(0x38bdf8, 0.3);
     bottomLight.position.set(0, -2, 1);
     scene.add(bottomLight);
 
@@ -106,7 +112,24 @@ export function Product3DModal({
     scene.add(modelGroup);
     modelGroupRef.current = modelGroup;
 
-    // 7. Carregamento do Modelo (.glb) ou Manequim de Alfaiataria Esculpido
+    // 7. Carregamento de Texturas Fotográficas PBR
+    const textureLoader = new THREE.TextureLoader();
+    const leatherNormal = textureLoader.load("/textures/leather/normal.webp");
+    leatherNormal.wrapS = THREE.RepeatWrapping;
+    leatherNormal.wrapT = THREE.RepeatWrapping;
+    leatherNormal.repeat.set(3.5, 3.5);
+
+    const leatherRoughness = textureLoader.load("/textures/leather/roughness.webp");
+    leatherRoughness.wrapS = THREE.RepeatWrapping;
+    leatherRoughness.wrapT = THREE.RepeatWrapping;
+    leatherRoughness.repeat.set(3.5, 3.5);
+
+    const canvasNormal = textureLoader.load("/textures/canvas/normal.webp");
+    canvasNormal.wrapS = THREE.RepeatWrapping;
+    canvasNormal.wrapT = THREE.RepeatWrapping;
+    canvasNormal.repeat.set(5.0, 5.0);
+
+    // 8. Carregamento do Modelo (.glb) ou Manequim de Alfaiataria Esculpido
     if (modelUrl) {
       const loader = new GLTFLoader();
       loader.setMeshoptDecoder(MeshoptDecoder);
@@ -132,22 +155,39 @@ export function Product3DModal({
 
                 const matName = (mesh.material as any)?.name || "";
                 if (matName.includes("Metal") || matName.includes("Degradable")) {
+                  // Plaqueta metálica Dubrae frontal cromada
                   mesh.material = new THREE.MeshStandardMaterial({
-                    color: 0xd4d4d8,
-                    metalness: 0.95,
-                    roughness: 0.18,
+                    color: 0xdcdce0,
+                    metalness: 0.96,
+                    roughness: 0.15,
                   });
                 } else if (matName.includes("Fabric") || matName.includes("Cloth")) {
+                  // Cadarços de algodão com trama visível e interior do cano
                   mesh.material = new THREE.MeshStandardMaterial({
-                    color: 0xf4f4f5,
-                    roughness: 0.75,
+                    color: 0xffffff,
+                    roughness: 0.78,
+                    metalness: 0.01,
+                    normalMap: canvasNormal,
+                    normalScale: new THREE.Vector2(1.2, 1.2),
+                  });
+                } else if (matName.includes("Plane.003") || matName.includes("Material.004") || matName.includes("Material.010")) {
+                  // Solado de borracha estruturado
+                  mesh.material = new THREE.MeshStandardMaterial({
+                    color: 0xfcfcfd,
+                    roughness: 0.65,
                     metalness: 0.02,
+                    normalMap: leatherNormal,
+                    normalScale: new THREE.Vector2(0.3, 0.3),
                   });
                 } else {
+                  // Cabedal em couro legítimo texturizado com microporos e acabamento acetinado
                   mesh.material = new THREE.MeshStandardMaterial({
-                    color: 0xfafafc,
-                    roughness: 0.52,
-                    metalness: 0.04,
+                    color: 0xf6f6f8,
+                    roughness: 0.44,
+                    metalness: 0.05,
+                    normalMap: leatherNormal,
+                    normalScale: new THREE.Vector2(0.85, 0.85),
+                    roughnessMap: leatherRoughness,
                   });
                 }
               }
@@ -229,6 +269,8 @@ export function Product3DModal({
     return () => {
       window.removeEventListener("resize", handleResize);
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
+      pmremGenerator.dispose();
+      envTexture.dispose();
       renderer.dispose();
       controls.dispose();
     };
