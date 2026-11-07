@@ -1,21 +1,49 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { MessageCircle, Sparkles } from "lucide-react";
+import { MessageCircle, Sparkles, MapPin, ArrowUpRight } from "lucide-react";
 import { createWhatsAppLink } from "@/lib/whatsapp";
 import { siteConfig } from "@/config/site";
+
+const rotatingWords = [
+  "SUA PRESENÇA.",
+  "SUA ATITUDE.",
+  "SUA IDENTIDADE.",
+  "SUA EXCLUSIVIDADE.",
+];
 
 export function Hero() {
   const heroRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [currentWordIdx, setCurrentWordIdx] = useState(0);
+  const [isWordAnimating, setIsWordAnimating] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
+
+  // Gatilho de entrada escalonada dos textos ao carregar
+  useEffect(() => {
+    const timer = setTimeout(() => setHasLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Rotação suave de palavras no título com animação fluida
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsWordAnimating(true);
+      setTimeout(() => {
+        setCurrentWordIdx((prev) => (prev + 1) % rotatingWords.length);
+        setIsWordAnimating(false);
+      }, 400);
+    }, 3600);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Inicialização infalível do vídeo em qualquer navegador
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Garante flags de mídia para autoplay nativo
     video.muted = true;
     video.defaultMuted = true;
     video.playsInline = true;
@@ -107,7 +135,7 @@ export function Hero() {
         <div className="absolute inset-x-0 bottom-0 h-32 sm:h-40 bg-gradient-to-t from-brand-surface via-brand-surface/60 to-transparent pointer-events-none" />
       </div>
 
-      {/* 2. CONTEÚDO PRINCIPAL (LIMPO E ELEGANTE NO CELULAR, COMPLETO NO COMPUTADOR) */}
+      {/* 2. CONTEÚDO PRINCIPAL COM ANIMAÇÕES CINEMATOGRÁFICAS VIVAS */}
       <div
         className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full my-auto pointer-events-auto"
         style={{
@@ -117,39 +145,81 @@ export function Hero() {
         }}
       >
         <div className="max-w-2xl lg:max-w-3xl">
-          {/* Badge: visível no desktop e tablet para manter o mobile minimalista */}
-          <div className="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-black/75 border border-brand-silver/30 backdrop-blur-xl mb-6 shadow-2xl">
-            <Sparkles className="w-3.5 h-3.5 text-brand-white animate-pulse" />
-            <span className="text-[11px] font-medium tracking-widest text-brand-white uppercase">
-              {siteConfig.demoMode
-                ? "Vitrine Conceito • Demonstração Comercial"
-                : "Moda Masculina • Coleções 2026"}
+          {/* Badge Dinâmico: Alerta de Loja Aberta + Drop (Novo posicionamento perfeitamente harmonizado) */}
+          <div
+            className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-brand-black/85 border border-white/20 backdrop-blur-xl mb-6 shadow-2xl transition-all duration-700 ease-out ${
+              hasLoaded
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 -translate-y-4"
+            }`}
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+            </span>
+            <span className="text-[11px] font-semibold tracking-widest text-emerald-400 uppercase">
+              Loja Física Aberta
+            </span>
+            <span className="text-white/20">•</span>
+            <span className="text-[11px] font-medium tracking-widest text-brand-silver uppercase">
+              Drop 2026 Disponível
             </span>
           </div>
 
-          {/* Título Principal */}
-          <h1 className="font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-4 sm:mb-6 drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] text-balance">
-            <span className="text-white block drop-shadow-lg">
+          {/* Título Principal com Animação e Rotação de Palavras */}
+          <h1
+            className={`font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-5 sm:mb-6 drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] text-balance transition-all duration-700 delay-150 ease-out ${
+              hasLoaded
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-6"
+            }`}
+          >
+            <span className="text-white block drop-shadow-lg tracking-tight">
               Seu Estilo.
             </span>
-            <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-white via-zinc-200 to-brand-silver drop-shadow-md">
-              Sua Presença.
+            
+            {/* Linha Dinâmica com Transição de Palavras */}
+            <span className="relative inline-block h-[1.1em] overflow-hidden align-bottom">
+              <span
+                key={currentWordIdx}
+                className={`inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-white via-zinc-100 to-brand-silver drop-shadow-md transition-all duration-500 ease-out ${
+                  isWordAnimating
+                    ? "opacity-0 -translate-y-6 scale-95 blur-sm"
+                    : "opacity-100 translate-y-0 scale-100 blur-0"
+                }`}
+              >
+                {rotatingWords[currentWordIdx]}
+              </span>
             </span>
           </h1>
 
-          {/* Subtítulo */}
-          <p className="text-sm sm:text-base lg:text-xl text-brand-offwhite max-w-xl font-normal leading-relaxed mb-6 sm:mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-pretty">
-            Moda masculina para quem valoriza estilo, conforto e personalidade.
-            Do casual à alfaiataria contemporânea e estética esportiva urbana.
+          {/* Subtítulo com Fade Suave */}
+          <p
+            className={`text-sm sm:text-base lg:text-xl text-brand-offwhite max-w-xl font-normal leading-relaxed mb-6 sm:mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-pretty transition-all duration-700 delay-300 ease-out ${
+              hasLoaded
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-6"
+            }`}
+          >
+            Moda masculina para quem valoriza estilo, conforto e presença marcante.
+            Do casual contemporâneo à alfaiataria de corte preciso e peças esportivas exclusivas.
           </p>
 
-          {/* Botões de Ação */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 relative z-30">
+          {/* Botões de Ação com Efeito Shimmer */}
+          <div
+            className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 relative z-30 transition-all duration-700 delay-450 ease-out ${
+              hasLoaded
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-6"
+            }`}
+          >
             <a
               href="#colecoes"
-              className="inline-flex items-center justify-center px-7 py-3.5 sm:px-8 sm:py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver hover:scale-[1.02] active:scale-[0.98] transition-[transform,background-color,color] duration-200 shadow-2xl focus:outline-none focus:ring-2 focus:ring-brand-silver text-center select-none"
+              className="relative group overflow-hidden inline-flex items-center justify-center px-7 py-3.5 sm:px-8 sm:py-4 bg-brand-white text-brand-black text-xs font-bold uppercase tracking-widest hover:bg-brand-silver hover:scale-[1.02] active:scale-[0.98] transition-[transform,background-color,color] duration-200 shadow-2xl focus:outline-none focus:ring-2 focus:ring-brand-silver text-center select-none"
             >
-              Explorar Coleções
+              {/* Feixe de luz sutil percorrendo o botão (Shimmer) */}
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent transition-transform duration-700 pointer-events-none" />
+              <span className="relative z-10">Explorar Coleções</span>
             </a>
 
             <a
@@ -158,24 +228,43 @@ export function Hero() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 pl-6 pr-5 py-3.5 sm:pl-7 sm:pr-6 sm:py-4 bg-brand-black/80 backdrop-blur-xl text-brand-offwhite border border-brand-silver/30 text-xs font-semibold uppercase tracking-widest hover:border-brand-white hover:bg-brand-graphite hover:scale-[1.02] active:scale-[0.98] transition-[transform,background-color,border-color,color] duration-200 focus:outline-none focus:ring-2 focus:ring-brand-silver shadow-2xl text-center select-none"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-400" />
-              Fale com a Black Store
+              <MessageCircle className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+              <span>Fale com a Black Store</span>
             </a>
           </div>
 
-          {/* Micro informativos */}
-          <div className="hidden sm:grid grid-cols-3 gap-6 pt-8 mt-8 border-t border-brand-border/40 text-left">
-            <div>
-              <p className="text-xs uppercase tracking-widest text-brand-muted">Conceito</p>
-              <p className="text-sm font-semibold text-brand-white mt-1">Streetwear & Luxo</p>
+          {/* Micro informativos com Hover Interativo */}
+          <div
+            className={`hidden sm:grid grid-cols-3 gap-6 pt-8 mt-8 border-t border-brand-border/40 text-left transition-all duration-700 delay-600 ease-out ${
+              hasLoaded
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-6"
+            }`}
+          >
+            <div className="group/item p-2 -m-2 rounded transition-colors hover:bg-white/5">
+              <p className="text-[10px] uppercase font-mono tracking-widest text-brand-muted group-hover/item:text-brand-silver transition-colors">
+                Conceito
+              </p>
+              <p className="text-sm font-semibold text-brand-white mt-0.5">
+                Streetwear & Luxo
+              </p>
             </div>
-            <div>
-              <p className="text-xs uppercase tracking-widest text-brand-muted">Variedade</p>
-              <p className="text-sm font-semibold text-brand-white mt-1">Casual a Esportivo</p>
+            <div className="group/item p-2 -m-2 rounded transition-colors hover:bg-white/5">
+              <p className="text-[10px] uppercase font-mono tracking-widest text-brand-muted group-hover/item:text-brand-silver transition-colors">
+                Variedade
+              </p>
+              <p className="text-sm font-semibold text-brand-white mt-0.5">
+                Casual a Esportivo
+              </p>
             </div>
-            <div>
-              <p className="text-xs uppercase tracking-widest text-brand-muted">Atendimento</p>
-              <p className="text-sm font-semibold text-brand-white mt-1">Via WhatsApp</p>
+            <div className="group/item p-2 -m-2 rounded transition-colors hover:bg-white/5">
+              <p className="text-[10px] uppercase font-mono tracking-widest text-brand-muted group-hover/item:text-brand-silver transition-colors">
+                Atendimento
+              </p>
+              <p className="text-sm font-semibold text-emerald-400 mt-0.5 flex items-center gap-1">
+                <span>Via WhatsApp</span>
+                <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
+              </p>
             </div>
           </div>
         </div>

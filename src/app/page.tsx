@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { TopAnnouncementBar } from "@/components/ui/TopAnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/home/Hero";
@@ -28,9 +27,6 @@ export default function HomePage() {
     <div className="min-h-screen bg-brand-black flex flex-col text-brand-offwhite">
       {/* Transição Cinematográfica de Abertura / Porta de Boutique */}
       <IntroTransition />
-
-      {/* Faixa Superior de Drop & Atendimento */}
-      <TopAnnouncementBar />
 
       {/* Top Header */}
       <Header />
