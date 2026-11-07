@@ -10,7 +10,36 @@ export function Hero() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Monitora a rolagem suavemente para efeito de transcendência / parallax
+  // Garantia absoluta de Autoplay contínuo em 100% dos navegadores
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.defaultMuted = true;
+    video.muted = true;
+
+    const attemptPlay = () => {
+      const promise = video.play();
+      if (promise !== undefined) {
+        promise.catch(() => {
+          // Fallback: se o navegador móvel exigir interação prévia, toca no primeiro toque ou scroll
+          const unlock = () => {
+            video.play().catch(() => {});
+            ["touchstart", "pointerdown", "click", "scroll"].forEach((evt) =>
+              window.removeEventListener(evt, unlock)
+            );
+          };
+          ["touchstart", "pointerdown", "click", "scroll"].forEach((evt) =>
+            window.addEventListener(evt, unlock, { once: true, passive: true })
+          );
+        });
+      }
+    };
+
+    attemptPlay();
+  }, []);
+
+  // Monitora a rolagem suavemente para transição de texto sem sobrecarregar a GPU
   useEffect(() => {
     let animationFrameId: number;
 
@@ -21,7 +50,6 @@ export function Hero() {
         const heroHeight = heroRef.current.offsetHeight || window.innerHeight;
         const currentScroll = window.scrollY;
 
-        // Progresso normalizado de 0 a 1 conforme o usuário rola a primeira dobra
         const progress = Math.min(Math.max(currentScroll / heroHeight, 0), 1);
         setScrollProgress(progress);
       });
@@ -36,29 +64,7 @@ export function Hero() {
     };
   }, []);
 
-  // Performance inteligente: gerencia reprodução do vídeo
-  useEffect(() => {
-    const heroEl = heroRef.current;
-    const videoEl = videoRef.current;
-    if (!heroEl || !videoEl) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          videoEl.play().catch(() => {});
-        } else {
-          videoEl.pause();
-        }
-      },
-      { threshold: 0.05 }
-    );
-
-    observer.observe(heroEl);
-    return () => observer.disconnect();
-  }, []);
-
-  // Transcendência sutil: expansão leve no scroll sem criar vácuo nem travar
-  const videoScale = 1 + scrollProgress * 0.06;
+  // Efeitos suaves sem travar a decodificação de vídeo
   const contentTranslateY = scrollProgress * 25;
   const contentOpacity = Math.max(1 - scrollProgress * 1.5, 0);
 
@@ -68,7 +74,7 @@ export function Hero() {
       id="inicio"
       className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden bg-brand-black select-none pt-24 pb-12 sm:pt-28 sm:pb-16"
     >
-      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO (TAMANHO NORMAL, PROPORÇÃO NATURAL E SEM TRAVAMENTO) */}
+      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO (100% QUALIDADE PURA ORIGINAL, SEM FILTROS PESADOS DE GPU) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <video
           ref={videoRef}
@@ -78,17 +84,14 @@ export function Hero() {
           playsInline
           preload="auto"
           poster="/media/hero-poster.jpg"
-          className="w-full h-full object-cover object-[center_20%] sm:object-[center_25%] filter brightness-[0.85] contrast-[1.06] will-change-transform transition-transform duration-100 ease-out"
-          style={{
-            transform: `scale(${videoScale})`,
-          }}
+          className="w-full h-full object-cover object-[center_35%] sm:object-[center_30%]"
         >
           <source src="/media/hero-banner.mp4" type="video/mp4" />
         </video>
 
-        {/* Gradientes cinematográficos de iluminação de luxo e legibilidade */}
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/35 to-brand-black/70" />
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-brand-black/20 to-brand-black/80" />
+        {/* Gradientes cinematográficos de iluminação de luxo (suaves, sem travar o vídeo) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/30 to-brand-black/60 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
         {/* Fusão inferior direta com as coleções (elimina espaços vazios) */}
         <div className="absolute inset-x-0 bottom-0 h-32 sm:h-44 bg-gradient-to-t from-brand-surface via-brand-surface/75 to-transparent pointer-events-none" />
@@ -150,7 +153,7 @@ export function Hero() {
             </a>
           </div>
 
-          {/* Micro informativos: visíveis no tablet/desktop para visual limpo no celular */}
+          {/* Micro informativos */}
           <div className="hidden sm:grid grid-cols-3 gap-6 pt-8 mt-8 border-t border-brand-border/40 text-left">
             <div>
               <p className="text-xs uppercase tracking-widest text-brand-muted">Conceito</p>
