@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { categoriesData } from "@/data/categories";
 import { ProductCategory } from "@/types";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 interface CategoryGridProps {
   onSelectCategory?: (category: ProductCategory) => void;
@@ -26,32 +27,34 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
     <section id="colecoes" className="py-24 bg-brand-surface relative border-t border-brand-border/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header da Seção */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-6 h-[1px] bg-brand-silver"></span>
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-silver">
-                Categorias Principais
-              </span>
+        <ScrollReveal>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-6 h-[1px] bg-brand-silver"></span>
+                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-silver">
+                  Categorias Principais
+                </span>
+              </div>
+              <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white text-balance">
+                Encontre Seu Estilo.
+              </h2>
             </div>
-            <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white text-balance">
-              Encontre Seu Estilo.
-            </h2>
+            <p className="text-brand-silver/80 max-w-md text-sm sm:text-base font-normal text-pretty">
+              Do casual ao esportivo, explore as coleções da Black Store projetadas para compor um guarda-roupa marcante.
+            </p>
           </div>
-          <p className="text-brand-silver/80 max-w-md text-sm sm:text-base font-normal text-pretty">
-            Do casual ao esportivo, explore as coleções da Black Store projetadas para compor um guarda-roupa marcante.
-          </p>
-        </div>
+        </ScrollReveal>
 
         {/* Grid de Categorias */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {categoriesData.map((cat) => (
-            <a
-              key={cat.id}
-              href={`#destaques`}
-              onClick={(e) => handleCategoryClick(cat.targetFilter, e)}
-              className="group relative h-[380px] sm:h-[420px] overflow-hidden bg-brand-black border border-brand-border/80 flex flex-col justify-end p-6 sm:p-8 transition-[border-color,box-shadow,transform] duration-300 hover:border-brand-silver/60 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.85)] active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-brand-silver select-none ring-1 ring-inset ring-white/5"
-            >
+          {categoriesData.map((cat, idx) => (
+            <ScrollReveal key={cat.id} delay={idx * 100}>
+              <a
+                href="#destaques"
+                onClick={(e) => handleCategoryClick(cat.targetFilter, e)}
+                className="group relative h-[380px] sm:h-[420px] overflow-hidden bg-brand-black border border-brand-border/80 flex flex-col justify-end p-6 sm:p-8 transition-[border-color,box-shadow,transform] duration-300 hover:border-brand-silver/60 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.85)] active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-brand-silver select-none ring-1 ring-inset ring-white/5"
+              >
               {/* Image Background */}
               <div className="absolute inset-0 z-0">
                 <Image
@@ -90,7 +93,8 @@ export function CategoryGrid({ onSelectCategory }: CategoryGridProps) {
                 </div>
               </div>
             </a>
-          ))}
+          </ScrollReveal>
+        ))}
         </div>
       </div>
     </section>

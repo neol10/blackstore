@@ -86,7 +86,7 @@ export function Hero() {
       id="inicio"
       className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden bg-brand-black select-none pt-24 pb-12 sm:pt-28 sm:pb-16"
     >
-      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO EQUILIBRADO (VÍVIDO À DIREITA, PROTEÇÃO SUAVE NO TEXTO) */}
+      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO COM BLUR EQUILIBRADO E CONTRASTE PREMIUM */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <video
           ref={videoRef}
@@ -97,11 +97,11 @@ export function Hero() {
           loop
           playsInline
           preload="auto"
-          className="w-full h-full object-cover object-[center_35%] sm:object-[center_30%] filter blur-[1.5px] scale-105 brightness-[0.82] contrast-[1.05]"
+          className="w-full h-full object-cover object-[center_35%] sm:object-[center_30%] filter blur-[3px] scale-105 brightness-[0.76] contrast-[1.08]"
         />
 
-        {/* Gradiente sutil focado na coluna de texto (esquerda), preservando o homem de terno e a loja à direita */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-transparent pointer-events-none" />
+        {/* Gradiente sutil focado na coluna de texto (esquerda), preservando o homem de terno e a vitrine à direita */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-transparent pointer-events-none" />
 
         {/* Fusão inferior suave com a seção seguinte */}
         <div className="absolute inset-x-0 bottom-0 h-32 sm:h-40 bg-gradient-to-t from-brand-surface via-brand-surface/60 to-transparent pointer-events-none" />

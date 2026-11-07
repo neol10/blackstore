@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { Sparkles, CheckCircle2 } from "lucide-react";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 export function AboutStore() {
   return (
@@ -10,62 +11,64 @@ export function AboutStore() {
           
           {/* Text and Philosophy */}
           <div className="lg:col-span-6 flex flex-col justify-center">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-6 h-[1px] bg-brand-silver"></span>
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-silver">
-                Identidade & Propósito
-              </span>
-            </div>
-
-            <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white leading-tight mb-6 text-balance">
-              Mais Que Roupas.
-              <br />
-              <span className="text-brand-silver">Uma Questão de Estilo.</span>
-            </h2>
-
-            <div className="space-y-4 text-brand-silver/90 text-sm sm:text-base leading-relaxed text-pretty">
-              <p>
-                Na Black Store, você encontra opções de moda masculina para diferentes momentos do seu dia. Do visual casual ao esportivo, nossa proposta é reunir variedade, estilo e praticidade em um só lugar.
-              </p>
-              <p>
-                Acreditamos que a vestimenta expressa segurança e atitude. Por isso, selecionamos peças com atenção ao caimento, à textura dos tecidos e à harmonia das combinações.
-              </p>
-            </div>
-
-            {/* Diferenciais Claros e Objetivos */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 pt-8 border-t border-brand-border/60">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-xs uppercase font-bold text-brand-white">Curadoria Específica</h3>
-                  <p className="text-xs text-brand-silver/70 mt-0.5">Modelagens alinhadas às tendências contemporâneas.</p>
-                </div>
+            <ScrollReveal direction="left">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-6 h-[1px] bg-brand-silver"></span>
+                <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-silver">
+                  Identidade & Propósito
+                </span>
               </div>
 
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-xs uppercase font-bold text-brand-white">Atendimento Dedicado</h3>
-                  <p className="text-xs text-brand-silver/70 mt-0.5">Suporte direto pelo WhatsApp para escolher o melhor tamanho.</p>
-                </div>
+              <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white leading-tight mb-6 text-balance">
+                Mais Que Roupas.
+                <br />
+                <span className="text-brand-silver">Uma Questão de Estilo.</span>
+              </h2>
+
+              <div className="space-y-4 text-brand-silver/90 text-sm sm:text-base leading-relaxed text-pretty">
+                <p>
+                  Na Black Store, você encontra opções de moda masculina para diferentes momentos do seu dia. Do visual casual ao esportivo, nossa proposta é reunir variedade, estilo e praticidade em um só lugar.
+                </p>
+                <p>
+                  Acreditamos que a vestimenta expressa segurança e atitude. Por isso, selecionamos peças com atenção ao caimento, à textura dos tecidos e à harmonia das combinações.
+                </p>
               </div>
 
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-xs uppercase font-bold text-brand-white">Variedade Completa</h3>
-                  <p className="text-xs text-brand-silver/70 mt-0.5">Do look de treino à camisa social alinhada.</p>
+              {/* Diferenciais Claros e Objetivos */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 pt-8 border-t border-brand-border/60">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-xs uppercase font-bold text-brand-white">Curadoria Específica</h3>
+                    <p className="text-xs text-brand-silver/70 mt-0.5">Modelagens alinhadas às tendências contemporâneas.</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="text-xs uppercase font-bold text-brand-white">Espaço Físico</h3>
-                  <p className="text-xs text-brand-silver/70 mt-0.5">Ambiente preparado para provar e receber você.</p>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-xs uppercase font-bold text-brand-white">Atendimento Dedicado</h3>
+                    <p className="text-xs text-brand-silver/70 mt-0.5">Suporte direto pelo WhatsApp para escolher o melhor tamanho.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-xs uppercase font-bold text-brand-white">Variedade Completa</h3>
+                    <p className="text-xs text-brand-silver/70 mt-0.5">Do look de treino à camisa social alinhada.</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-brand-white shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="text-xs uppercase font-bold text-brand-white">Espaço Físico</h3>
+                    <p className="text-xs text-brand-silver/70 mt-0.5">Ambiente preparado para provar e receber você.</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
 
           {/* Visual Showcase */}

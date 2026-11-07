@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { ProductItem, ProductCategory } from "@/types";
 import { ProductCard } from "./ProductCard";
 import { ProductFilters } from "./ProductFilters";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 interface ProductGridProps {
   products: ProductItem[];
@@ -46,20 +47,22 @@ export function ProductGrid({
     <section id="destaques" className="py-24 bg-brand-black relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header da Seção */}
-        <div className="max-w-2xl mb-12">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="w-6 h-[1px] bg-brand-silver"></span>
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-silver">
-              Vitrine Exclusiva
-            </span>
+        <ScrollReveal>
+          <div className="max-w-2xl mb-12">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-6 h-[1px] bg-brand-silver"></span>
+              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-silver">
+                Vitrine Exclusiva
+              </span>
+            </div>
+            <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white mb-4 text-balance">
+              Destaques da Black Store.
+            </h2>
+            <p className="text-brand-silver/90 text-sm sm:text-base font-normal text-pretty">
+              Explore peças selecionadas para diferentes estilos e ocasiões. Consulte a disponibilidade do seu tamanho diretamente com nossa equipe.
+            </p>
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold uppercase tracking-tight text-brand-white mb-4 text-balance">
-            Destaques da Black Store.
-          </h2>
-          <p className="text-brand-silver/90 text-sm sm:text-base font-normal text-pretty">
-            Explore peças selecionadas para diferentes estilos e ocasiões. Consulte a disponibilidade do seu tamanho diretamente com nossa equipe.
-          </p>
-        </div>
+        </ScrollReveal>
 
         {/* Filtros */}
         <ProductFilters
