@@ -86,7 +86,7 @@ export function Hero() {
       id="inicio"
       className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden bg-brand-black select-none pt-24 pb-12 sm:pt-28 sm:pb-16"
     >
-      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO COM BLUR E TONALIDADE ESCURA PARA MÁXIMA LEGIBILIDADE */}
+      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO EQUILIBRADO (VÍVIDO À DIREITA, PROTEÇÃO SUAVE NO TEXTO) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <video
           ref={videoRef}
@@ -97,17 +97,14 @@ export function Hero() {
           loop
           playsInline
           preload="auto"
-          className="w-full h-full object-cover object-[center_35%] sm:object-[center_30%] filter blur-[5px] scale-110 brightness-[0.60] contrast-[1.05]"
+          className="w-full h-full object-cover object-[center_35%] sm:object-[center_30%] filter blur-[1.5px] scale-105 brightness-[0.82] contrast-[1.05]"
         />
 
-        {/* Camada uniforme de escurecimento com backdrop-blur para contraste refinado */}
-        <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px] pointer-events-none" />
+        {/* Gradiente sutil focado na coluna de texto (esquerda), preservando o homem de terno e a loja à direita */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-transparent pointer-events-none" />
 
-        {/* Gradiente direcional escuro para destacar as frases e botões */}
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-black/90 via-brand-black/60 to-black/40 pointer-events-none" />
-
-        {/* Fusão inferior direta com as coleções */}
-        <div className="absolute inset-x-0 bottom-0 h-36 sm:h-48 bg-gradient-to-t from-brand-surface via-brand-surface/85 to-transparent pointer-events-none" />
+        {/* Fusão inferior suave com a seção seguinte */}
+        <div className="absolute inset-x-0 bottom-0 h-32 sm:h-40 bg-gradient-to-t from-brand-surface via-brand-surface/60 to-transparent pointer-events-none" />
       </div>
 
       {/* 2. CONTEÚDO PRINCIPAL (LIMPO E ELEGANTE NO CELULAR, COMPLETO NO COMPUTADOR) */}
@@ -131,17 +128,17 @@ export function Hero() {
           </div>
 
           {/* Título Principal */}
-          <h1 className="font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-4 sm:mb-6 drop-shadow-2xl text-balance">
-            <span className="text-white block drop-shadow-md">
+          <h1 className="font-display text-4xl sm:text-6xl lg:text-8xl font-bold tracking-tight uppercase leading-[0.98] mb-4 sm:mb-6 drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)] text-balance">
+            <span className="text-white block drop-shadow-lg">
               Seu Estilo.
             </span>
-            <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-white via-zinc-200 to-brand-silver">
+            <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-white via-zinc-200 to-brand-silver drop-shadow-md">
               Sua Presença.
             </span>
           </h1>
 
           {/* Subtítulo */}
-          <p className="text-sm sm:text-base lg:text-xl text-brand-offwhite/90 max-w-xl font-normal leading-relaxed mb-6 sm:mb-10 drop-shadow-md text-pretty">
+          <p className="text-sm sm:text-base lg:text-xl text-brand-offwhite max-w-xl font-normal leading-relaxed mb-6 sm:mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-pretty">
             Moda masculina para quem valoriza estilo, conforto e personalidade.
             Do casual à alfaiataria contemporânea e estética esportiva urbana.
           </p>
