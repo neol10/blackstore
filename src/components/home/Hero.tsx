@@ -10,36 +10,50 @@ export function Hero() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Garantia absoluta de Autoplay contínuo em 100% dos navegadores
+  // Inicialização infalível do vídeo em qualquer navegador
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    video.defaultMuted = true;
+    // Garante que o navegador reconheça como mudo para autorizar o autoplay imediato
     video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
 
-    const attemptPlay = () => {
+    const startPlaying = () => {
       const promise = video.play();
       if (promise !== undefined) {
-        promise.catch(() => {
-          // Fallback: se o navegador móvel exigir interação prévia, toca no primeiro toque ou scroll
-          const unlock = () => {
-            video.play().catch(() => {});
-            ["touchstart", "pointerdown", "click", "scroll"].forEach((evt) =>
-              window.removeEventListener(evt, unlock)
-            );
-          };
-          ["touchstart", "pointerdown", "click", "scroll"].forEach((evt) =>
-            window.addEventListener(evt, unlock, { once: true, passive: true })
-          );
-        });
+        promise.catch(() => {});
       }
     };
 
-    attemptPlay();
+    if (video.readyState >= 2) {
+      startPlaying();
+    } else {
+      video.addEventListener("loadeddata", startPlaying, { once: true });
+      video.addEventListener("canplay", startPlaying, { once: true });
+    }
+
+    // Fallback para navegadores móveis com modo de economia de dados ativo
+    const unlock = () => {
+      startPlaying();
+      ["touchstart", "pointerdown", "click", "scroll"].forEach((ev) =>
+        window.removeEventListener(ev, unlock)
+      );
+    };
+
+    ["touchstart", "pointerdown", "click", "scroll"].forEach((ev) =>
+      window.addEventListener(ev, unlock, { once: true, passive: true })
+    );
+
+    return () => {
+      ["touchstart", "pointerdown", "click", "scroll"].forEach((ev) =>
+        window.removeEventListener(ev, unlock)
+      );
+    };
   }, []);
 
-  // Monitora a rolagem suavemente para transição de texto sem sobrecarregar a GPU
+  // Monitora a rolagem suavemente para transição de texto
   useEffect(() => {
     let animationFrameId: number;
 
@@ -64,7 +78,6 @@ export function Hero() {
     };
   }, []);
 
-  // Efeitos suaves sem travar a decodificação de vídeo
   const contentTranslateY = scrollProgress * 25;
   const contentOpacity = Math.max(1 - scrollProgress * 1.5, 0);
 
@@ -74,26 +87,25 @@ export function Hero() {
       id="inicio"
       className="relative min-h-[100dvh] w-full flex flex-col justify-center overflow-hidden bg-brand-black select-none pt-24 pb-12 sm:pt-28 sm:pb-16"
     >
-      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO (100% QUALIDADE PURA ORIGINAL, SEM FILTROS PESADOS DE GPU) */}
+      {/* 1. VÍDEO CINEMATOGRÁFICO DE FUNDO (REPRODUÇÃO NATIVA GARANTIDA COM SRC DIRETO) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <video
           ref={videoRef}
+          src="/media/hero-banner.mp4"
+          poster="/media/hero-poster.jpg"
           autoPlay
           muted
           loop
           playsInline
           preload="auto"
-          poster="/media/hero-poster.jpg"
           className="w-full h-full object-cover object-[center_35%] sm:object-[center_30%]"
-        >
-          <source src="/media/hero-banner.mp4" type="video/mp4" />
-        </video>
+        />
 
-        {/* Gradientes cinematográficos de iluminação de luxo (suaves, sem travar o vídeo) */}
+        {/* Gradientes cinematográficos de iluminação de luxo */}
         <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/30 to-brand-black/60 pointer-events-none" />
         <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
-        {/* Fusão inferior direta com as coleções (elimina espaços vazios) */}
+        {/* Fusão inferior direta com as coleções */}
         <div className="absolute inset-x-0 bottom-0 h-32 sm:h-44 bg-gradient-to-t from-brand-surface via-brand-surface/75 to-transparent pointer-events-none" />
       </div>
 
