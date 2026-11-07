@@ -5,8 +5,13 @@ import { MessageCircle, Sparkles } from "lucide-react";
 import { createWhatsAppLink } from "@/lib/whatsapp";
 import { siteConfig } from "@/config/site";
 
-// Seleção de 60 frames-chave (passo uniforme de 1 até 119)
-const FRAME_NUMBERS = Array.from({ length: 60 }, (_, i) => 1 + i * 2);
+// Nova sequência Black Store: 97 frames-chave selecionados a partir dos 194 frames
+// Oferece o dobro de quadros da versão anterior com carregamento leve e ultra fluido
+const TARGET_FRAME_COUNT = 97;
+const FRAME_NUMBERS = Array.from(
+  { length: TARGET_FRAME_COUNT },
+  (_, i) => Math.round(1 + (i * (194 - 1)) / (TARGET_FRAME_COUNT - 1))
+);
 const TOTAL_FRAMES = FRAME_NUMBERS.length;
 
 const getFramePath = (frameNum: number) => {
@@ -26,12 +31,12 @@ export function Hero() {
   const [smoothProgress, setSmoothProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // 1. Pré-carregamento dos 60 frames em WebP
+  // 1. Pré-carregamento dos 97 frames em WebP
   useEffect(() => {
     let isMounted = true;
     const images: HTMLImageElement[] = [];
 
-    // Frame 1 prioritário para exibição imediata
+    // Frame 1 prioritário para exibição imediata sem tela preta
     const firstImg = new Image();
     firstImg.src = getFramePath(FRAME_NUMBERS[0]);
     images[0] = firstImg;
@@ -43,7 +48,7 @@ export function Hero() {
       renderFrame(0);
     };
 
-    // Pré-carrega os 59 restantes em background
+    // Pré-carrega os frames restantes em background
     for (let i = 1; i < TOTAL_FRAMES; i++) {
       const img = new Image();
       img.src = getFramePath(FRAME_NUMBERS[i]);
@@ -72,6 +77,7 @@ export function Hero() {
     const iw = img.naturalWidth;
     const ih = img.naturalHeight;
 
+    // Algoritmo matematicamente proporcional: preenche a tela sem distorção
     const hRatio = cw / iw;
     const vRatio = ch / ih;
     const ratio = Math.max(hRatio, vRatio);
@@ -114,7 +120,7 @@ export function Hero() {
     const lerpLoop = () => {
       const diff = targetFrameRef.current - smoothFrameRef.current;
       if (Math.abs(diff) > 0.02) {
-        smoothFrameRef.current += diff * 0.24;
+        smoothFrameRef.current += diff * 0.22;
         const frameToDraw = Math.min(
           Math.max(Math.round(smoothFrameRef.current), 0),
           TOTAL_FRAMES - 1
@@ -173,12 +179,12 @@ export function Hero() {
     };
   }, [isLoaded]);
 
-  // Sincronia perfeita das frases com o terno:
-  // 1. O texto principal faz fade-out rápido e proporcional quando o abotoamento começa
-  const contentOpacity = Math.max(1 - smoothProgress * 3.4, 0);
+  // Sincronia das frases com a nova sequência:
+  // 1. O texto principal faz fade-out rápido quando o scroll começa
+  const contentOpacity = Math.max(1 - smoothProgress * 3.2, 0);
   const contentTranslateY = -smoothProgress * 45;
 
-  // 2. A legenda editorial surge exatamente quando as mãos fecham o botão central
+  // 2. A legenda editorial surge no ápice do movimento
   const editorialOpacity =
     smoothProgress > 0.28 && smoothProgress < 0.76
       ? Math.sin(((smoothProgress - 0.28) / 0.48) * Math.PI)
@@ -188,7 +194,7 @@ export function Hero() {
     <div
       ref={containerRef}
       id="inicio"
-      className="relative h-[150vh] sm:h-[180vh] bg-brand-black select-none"
+      className="relative h-[180vh] sm:h-[220vh] bg-brand-black select-none"
     >
       {/* Container Sticky preso durante a rolagem */}
       <div className="sticky top-0 left-0 w-full h-[100dvh] overflow-hidden flex items-center justify-center">
