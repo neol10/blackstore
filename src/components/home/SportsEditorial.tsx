@@ -9,7 +9,7 @@ interface SportsEditorialProps {
   onSelectCategory?: (category: ProductCategory) => void;
 }
 
-const TOTAL_FRAMES = 191;
+const TOTAL_FRAMES = 64;
 const FRAME_PREFIX = "/media/futebol-sequence/frame-";
 const FRAME_EXT = ".webp";
 
@@ -90,9 +90,9 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
 
     let isMounted = true;
 
-    // Estágio 1: Carrega frames chave espaçados a cada 4 frames para resposta imediata
+    // Estágio 1: Carrega frames chave espaçados a cada 2 frames para resposta instantânea
     const keyframeIndices: number[] = [];
-    for (let i = 1; i <= TOTAL_FRAMES; i += 4) {
+    for (let i = 1; i <= TOTAL_FRAMES; i += 2) {
       keyframeIndices.push(i);
     }
     if (!keyframeIndices.includes(TOTAL_FRAMES)) {
