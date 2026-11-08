@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
-import { ArrowRight, Flame, Play, Pause, ChevronDown, Check, Sparkles } from "lucide-react";
+import { ArrowRight, Flame, Check, Sparkles } from "lucide-react";
 import { ProductCategory } from "@/types";
 
 interface SportsEditorialProps {
@@ -24,8 +24,6 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
 
   // Estados de controle e renderização
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [isPlayingAuto, setIsPlayingAuto] = useState(false);
-  const [loadedPercent, setLoadedPercent] = useState(0);
   const [isSectionVisible, setIsSectionVisible] = useState(false);
 
   // Cache de imagens em memória
@@ -33,7 +31,6 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
   const currentFrameRef = useRef(1);
   const targetFrameRef = useRef(1);
   const rafIdRef = useRef<number | null>(null);
-  const autoPlayRafRef = useRef<number | null>(null);
 
   // Redirecionamento para a coleção esportiva
   const handleGoToSports = useCallback(
@@ -92,13 +89,6 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
     if (!isSectionVisible) return;
 
     let isMounted = true;
-    let count = 0;
-
-    const updateCount = () => {
-      if (!isMounted) return;
-      count++;
-      setLoadedPercent(Math.min(100, Math.round((count / TOTAL_FRAMES) * 100)));
-    };
 
     // Estágio 1: Carrega frames chave espaçados a cada 4 frames para resposta imediata
     const keyframeIndices: number[] = [];
@@ -119,12 +109,10 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
           img.src = getFrameUrl(idx);
           img.onload = () => {
             imagesRef.current[idx] = img;
-            updateCount();
             if (Math.abs(currentFrameRef.current - idx) < 2) {
               drawFrame(currentFrameRef.current);
             }
           };
-          img.onerror = updateCount;
         }
       }
 
@@ -136,9 +124,7 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
           img.src = getFrameUrl(i);
           img.onload = () => {
             imagesRef.current[i] = img;
-            updateCount();
           };
-          img.onerror = updateCount;
           // Pequena pausa para não afogar a rede do browser
           if (i % 12 === 0) {
             await new Promise((r) => setTimeout(r, 16));
@@ -255,46 +241,15 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
       const progress = Math.max(0, Math.min(1, -rect.top / totalScrollable));
       setScrollProgress(progress);
 
-      if (!isPlayingAuto) {
-        const frame = Math.max(1, Math.min(TOTAL_FRAMES, Math.round(progress * (TOTAL_FRAMES - 1) + 1)));
-        targetFrameRef.current = frame;
-      }
+      const frame = Math.max(1, Math.min(TOTAL_FRAMES, Math.round(progress * (TOTAL_FRAMES - 1) + 1)));
+      targetFrameRef.current = frame;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isPlayingAuto]);
-
-  // Auto-play suave para quem preferir apenas assistir à animação
-  useEffect(() => {
-    if (!isPlayingAuto) {
-      if (autoPlayRafRef.current) cancelAnimationFrame(autoPlayRafRef.current);
-      return;
-    }
-
-    let forward = true;
-    const step = () => {
-      let next = targetFrameRef.current + (forward ? 0.65 : -0.65);
-      if (next >= TOTAL_FRAMES) {
-        next = TOTAL_FRAMES;
-        forward = false;
-      } else if (next <= 1) {
-        next = 1;
-        forward = true;
-      }
-      targetFrameRef.current = next;
-      setScrollProgress((next - 1) / (TOTAL_FRAMES - 1));
-      autoPlayRafRef.current = requestAnimationFrame(step);
-    };
-
-    autoPlayRafRef.current = requestAnimationFrame(step);
-
-    return () => {
-      if (autoPlayRafRef.current) cancelAnimationFrame(autoPlayRafRef.current);
-    };
-  }, [isPlayingAuto]);
+  }, []);
 
   return (
     <section
@@ -303,15 +258,17 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
       className="relative bg-[#070707] border-t border-brand-border/40 select-none min-h-[250vh] sm:min-h-[280vh]"
     >
       {/* 1. CONTAINER STICKY QUE PREENCHE A TELA DURANTE O SCROLL */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between">
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
         
-        {/* Canvas de Alta Resolução */}
+        {/* Canvas de Alta Resolução com Blur e Escurecimento Cinematográfico */}
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none filter blur-[3px] scale-105 brightness-[0.76] contrast-[1.08]"
         />
 
-        {/* Efeitos de Luz & Vinhetas Cinematográficas do Estádio */}
+        {/* Efeitos de Luz & Vinhetas Cinematográficas do Estádio (idêntico ao Hero) */}
+        <div className="absolute inset-0 bg-black/45 pointer-events-none z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-transparent pointer-events-none z-10" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#070707] via-transparent to-[#070707]/80 pointer-events-none z-10" />
         <div
           className="absolute inset-0 pointer-events-none z-10"
@@ -322,47 +279,8 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
         <div className="absolute top-1/2 left-0 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-blue-600/15 rounded-full blur-[110px] pointer-events-none z-10" />
         <div className="absolute top-1/2 right-0 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-red-600/15 rounded-full blur-[110px] pointer-events-none z-10" />
 
-        {/* TOP BAR: Header & Status da Experiência */}
-        <header className="relative z-30 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 flex items-center justify-between pointer-events-auto">
-          <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-brand-black/80 border border-white/15 backdrop-blur-xl shadow-2xl">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
-            </span>
-            <span className="text-[10px] font-mono tracking-widest uppercase text-white/90">
-              Linha Esportiva • Experiência 360°
-            </span>
-          </div>
-
-          {/* Controle Interativo: Play / Pause Automático & Indicador de Frame */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 border border-white/10 backdrop-blur-md text-[11px] font-mono text-white/70">
-              <span>TÚNEL:</span>
-              <span className="text-white font-bold">{Math.round(scrollProgress * 100)}%</span>
-            </div>
-
-            <button
-              onClick={() => setIsPlayingAuto(!isPlayingAuto)}
-              title={isPlayingAuto ? "Pausar rotação automática" : "Iniciar rotação automática"}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 active:scale-95 border border-white/20 backdrop-blur-xl text-white text-xs font-mono transition-all duration-200"
-            >
-              {isPlayingAuto ? (
-                <>
-                  <Pause className="w-3.5 h-3.5 fill-white" />
-                  <span className="hidden sm:inline text-[11px]">Pausar</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-3.5 h-3.5 fill-white" />
-                  <span className="hidden sm:inline text-[11px]">Auto Play</span>
-                </>
-              )}
-            </button>
-          </div>
-        </header>
-
         {/* NARRATIVAS FLUTUANTES SINCRONIZADAS AO SCROLL */}
-        <div className="relative z-20 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex-1 flex flex-col justify-center pointer-events-none">
+        <div className="relative z-20 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pointer-events-none">
           
           {/* FASE 1: ENTRADA DO TÚNEL (0.00 a 0.28) */}
           <div
@@ -386,11 +304,6 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
             <p className="text-brand-offwhite text-sm sm:text-base lg:text-lg max-w-xl leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] mb-6 text-pretty">
               Caminhe pelo túnel dos maiores campeões europeus. Do Santiago Bernabéu ao Camp Nou, o corte esportivo ganha atitude streetwear autêntica na Black Store.
             </p>
-
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-white/90 text-xs font-mono">
-              <ChevronDown className="w-3.5 h-3.5 animate-bounce" />
-              <span>Role a página para descer o túnel em direção ao gramado</span>
-            </div>
           </div>
 
           {/* FASE 2: OS MANTOS SAGRADOS (0.28 a 0.68) - CARDS LATERAIS COINCIDINDO COM AS PAREDES */}
@@ -525,32 +438,6 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
           </div>
 
         </div>
-
-        {/* BOTTOM BAR: Barra de Progresso do Túnel */}
-        <footer className="relative z-30 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8 flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto">
-          {/* Barra de Progresso Fina Cinematográfica */}
-          <div className="w-full sm:max-w-md flex items-center gap-3">
-            <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider shrink-0">
-              Túnel
-            </span>
-            <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden relative">
-              <div
-                className="h-full bg-gradient-to-r from-blue-500 via-white to-red-500 rounded-full transition-all duration-150"
-                style={{ width: `${Math.max(4, scrollProgress * 100)}%` }}
-              />
-            </div>
-            <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider shrink-0">
-              Gramado
-            </span>
-          </div>
-
-          {/* Dica de interação */}
-          <div className="text-[11px] font-mono text-white/50 flex items-center gap-2">
-            <span>Controle a velocidade pela rolagem</span>
-            <span className="hidden sm:inline">•</span>
-            <span className="text-white/80">{loadedPercent}% carregado</span>
-          </div>
-        </footer>
 
       </div>
     </section>
