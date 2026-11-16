@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { MessageCircle, Sparkles, MapPin, ArrowUpRight } from "lucide-react";
+import { MessageCircle, Sparkles, MapPin } from "lucide-react";
 import { createWhatsAppLink } from "@/lib/whatsapp";
 import { siteConfig } from "@/config/site";
 
@@ -210,7 +210,7 @@ export function Hero() {
           </div>
 
           {/* Micro informativos: Entram em 0.35s */}
-          <div className="hero-fast-footer hidden sm:grid grid-cols-3 gap-6 pt-8 mt-8 border-t border-brand-border/40 text-left">
+          <div className="hero-fast-footer hidden sm:grid grid-cols-2 max-w-sm gap-8 pt-8 mt-8 border-t border-brand-border/40 text-left">
             <div className="group/item p-2 -m-2 rounded transition-colors hover:bg-white/5">
               <p className="text-[10px] uppercase font-mono tracking-widest text-brand-muted group-hover/item:text-brand-silver transition-colors">
                 Conceito
@@ -225,15 +225,6 @@ export function Hero() {
               </p>
               <p className="text-sm font-semibold text-brand-white mt-0.5">
                 Casual a Esportivo
-              </p>
-            </div>
-            <div className="group/item p-2 -m-2 rounded transition-colors hover:bg-white/5">
-              <p className="text-[10px] uppercase font-mono tracking-widest text-brand-muted group-hover/item:text-brand-silver transition-colors">
-                Atendimento
-              </p>
-              <p className="text-sm font-semibold text-emerald-400 mt-0.5 flex items-center gap-1">
-                <span>Via WhatsApp</span>
-                <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
               </p>
             </div>
           </div>
