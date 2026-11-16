@@ -1,9 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { ArrowRight, Flame, Check, Sparkles } from "lucide-react";
 import { ProductCategory } from "@/types";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Registrar ScrollTrigger apenas uma vez
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface SportsEditorialProps {
   onSelectCategory?: (category: ProductCategory) => void;
@@ -20,17 +27,17 @@ const getFrameUrl = (index: number) => {
 
 export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Estados de controle e renderização
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [isSectionVisible, setIsSectionVisible] = useState(false);
+  // Refs para as fases da narrativa editorial (controladas pelo GSAP)
+  const phase1Ref = useRef<HTMLDivElement>(null);
+  const phase2Ref = useRef<HTMLDivElement>(null);
+  const phase3Ref = useRef<HTMLDivElement>(null);
 
   // Cache de imagens em memória
   const imagesRef = useRef<(HTMLImageElement | null)[]>(new Array(TOTAL_FRAMES + 1).fill(null));
   const currentFrameRef = useRef(1);
-  const targetFrameRef = useRef(1);
-  const rafIdRef = useRef<number | null>(null);
 
   // Redirecionamento para a coleção esportiva
   const handleGoToSports = useCallback(
@@ -56,102 +63,17 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
     window.open(`https://wa.me/5511999999999?text=${encoded}`, "_blank", "noopener,noreferrer");
   };
 
-  // 1. Carregamento do Frame 1 Imediato para nunca ficar tela preta
-  useEffect(() => {
-    const img1 = new window.Image();
-    img1.src = getFrameUrl(1);
-    img1.onload = () => {
-      imagesRef.current[1] = img1;
-      drawFrame(1);
-    };
-  }, []);
-
-  // 2. Observar proximidade da seção para iniciar o carregamento progressivo
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsSectionVisible(true);
-        }
-      },
-      { rootMargin: "600px 0px 600px 0px" }
-    );
-
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
-
-  // 3. Carregamento progressivo em 2 estágios (Keyframes primeiro, depois frames intermediários)
-  useEffect(() => {
-    if (!isSectionVisible) return;
-
-    let isMounted = true;
-
-    // Estágio 1: Carrega frames chave espaçados a cada 2 frames para resposta instantânea
-    const keyframeIndices: number[] = [];
-    for (let i = 1; i <= TOTAL_FRAMES; i += 2) {
-      keyframeIndices.push(i);
-    }
-    if (!keyframeIndices.includes(TOTAL_FRAMES)) {
-      keyframeIndices.push(TOTAL_FRAMES);
-    }
-
-    // Carregador de fila controlado
-    const loadQueue = async () => {
-      // Prioridade 1: Keyframes
-      for (const idx of keyframeIndices) {
-        if (!isMounted) return;
-        if (!imagesRef.current[idx]) {
-          const img = new window.Image();
-          img.src = getFrameUrl(idx);
-          img.onload = () => {
-            imagesRef.current[idx] = img;
-            if (Math.abs(currentFrameRef.current - idx) < 2) {
-              drawFrame(currentFrameRef.current);
-            }
-          };
-        }
-      }
-
-      // Prioridade 2: Frames intermediários restantes
-      for (let i = 1; i <= TOTAL_FRAMES; i++) {
-        if (!isMounted) return;
-        if (!imagesRef.current[i]) {
-          const img = new window.Image();
-          img.src = getFrameUrl(i);
-          img.onload = () => {
-            imagesRef.current[i] = img;
-          };
-          // Pequena pausa para não afogar a rede do browser
-          if (i % 12 === 0) {
-            await new Promise((r) => setTimeout(r, 16));
-          }
-        }
-      }
-    };
-
-    loadQueue();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isSectionVisible]);
-
-  // Função para desenhar no Canvas mantendo Aspect-Ratio Cover perfeito
+  // Função otimizada para desenhar no Canvas mantendo Aspect-Ratio Cover perfeito
   const drawFrame = useCallback((frameIndex: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx) return;
 
-    // Busca o frame exato ou o mais próximo disponível
+    // Busca o frame exato ou o mais próximo já carregado
     let img = imagesRef.current[frameIndex];
     if (!img || !img.complete || img.naturalWidth === 0) {
-      // Procura o mais próximo já carregado
-      for (let offset = 1; offset < 30; offset++) {
+      for (let offset = 1; offset < 20; offset++) {
         const prev = imagesRef.current[Math.max(1, frameIndex - offset)];
         if (prev && prev.complete && prev.naturalWidth > 0) {
           img = prev;
@@ -191,75 +113,203 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(canvas.clientWidth * dpr);
     canvas.height = Math.round(canvas.clientHeight * dpr);
-    drawFrame(Math.round(currentFrameRef.current));
+    drawFrame(currentFrameRef.current);
   }, [drawFrame]);
 
+  // 1. Carregamento do Frame 1 Imediato para exibir o túnel em 0ms
+  useEffect(() => {
+    const img1 = new window.Image();
+    img1.src = getFrameUrl(1);
+    img1.onload = () => {
+      imagesRef.current[1] = img1;
+      drawFrame(1);
+    };
+  }, [drawFrame]);
+
+  // 2. Pré-carregamento progressivo em 2 estágios ao aproximar da seção
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    let isMounted = true;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || !isMounted) return;
+
+        // Estágio 1: Frames espaçados a cada 2 quadros para rolagem imediata
+        const keyframeIndices: number[] = [];
+        for (let i = 1; i <= TOTAL_FRAMES; i += 2) {
+          keyframeIndices.push(i);
+        }
+        if (!keyframeIndices.includes(TOTAL_FRAMES)) {
+          keyframeIndices.push(TOTAL_FRAMES);
+        }
+
+        for (const idx of keyframeIndices) {
+          if (!imagesRef.current[idx]) {
+            const img = new window.Image();
+            img.src = getFrameUrl(idx);
+            img.onload = () => {
+              if (isMounted) {
+                imagesRef.current[idx] = img;
+                if (Math.abs(currentFrameRef.current - idx) < 2) {
+                  drawFrame(currentFrameRef.current);
+                }
+              }
+            };
+          }
+        }
+
+        // Estágio 2: Frames intermediários restantes
+        for (let i = 1; i <= TOTAL_FRAMES; i++) {
+          if (!imagesRef.current[i]) {
+            const img = new window.Image();
+            img.src = getFrameUrl(i);
+            img.onload = () => {
+              if (isMounted) imagesRef.current[i] = img;
+            };
+          }
+        }
+
+        observer.disconnect();
+      },
+      { rootMargin: "800px 0px 800px 0px" }
+    );
+
+    observer.observe(section);
+
+    return () => {
+      isMounted = false;
+      observer.disconnect();
+    };
+  }, [drawFrame]);
+
+  // 3. Listener de Resize
   useEffect(() => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [handleResize]);
 
-  // Loop suave de interpolação linear (LERP) a 60fps para sensação sedosa no scroll
+  // 4. GSAP ScrollTrigger Masterpiece: Scrubbing Contínuo a 60/120 FPS
   useEffect(() => {
-    let active = true;
+    const section = sectionRef.current;
+    const canvas = canvasRef.current;
+    const p1 = phase1Ref.current;
+    const p2 = phase2Ref.current;
+    const p3 = phase3Ref.current;
 
-    const loop = () => {
-      if (!active) return;
-      const target = targetFrameRef.current;
-      const current = currentFrameRef.current;
-      const diff = target - current;
+    if (!section || !canvas || !p1 || !p2 || !p3) return;
 
-      if (Math.abs(diff) > 0.05) {
-        currentFrameRef.current += diff * 0.18;
-        drawFrame(Math.round(currentFrameRef.current));
-      }
+    // Criar contexto seguro do GSAP para limpeza automática no React
+    const ctx = gsap.context(() => {
+      const frameData = { frame: 1 };
 
-      rafIdRef.current = requestAnimationFrame(loop);
-    };
+      // Linha do tempo mestre acoplada ao ScrollTrigger
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "+=2000",
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.5, // 0.5s de atraso para inércia aveludada sem travamento
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
 
-    rafIdRef.current = requestAnimationFrame(loop);
+      // 4.1 Scrub dos frames do Canvas de 1 a 64 (sem nenhum re-render no React!)
+      tl.to(
+        frameData,
+        {
+          frame: TOTAL_FRAMES,
+          ease: "none",
+          onUpdate: () => {
+            const target = Math.round(frameData.frame);
+            if (target !== currentFrameRef.current) {
+              currentFrameRef.current = target;
+              drawFrame(target);
+            }
+          },
+        },
+        0
+      );
+
+      // 4.2 Fase 1: Visível no início, fade out suave aos 22% do percurso
+      gsap.set(p1, { opacity: 1, y: 0, pointerEvents: "auto" });
+      tl.to(
+        p1,
+        {
+          opacity: 0,
+          y: -30,
+          duration: 0.15,
+          ease: "power2.in",
+          pointerEvents: "none",
+        },
+        0.18
+      );
+
+      // 4.3 Fase 2: Cards flutuantes Real Madrid e Barcelona entram aos 28% e saem aos 64%
+      gsap.set(p2, { opacity: 0, y: 35, pointerEvents: "none" });
+      tl.to(
+        p2,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.15,
+          ease: "power2.out",
+          pointerEvents: "auto",
+        },
+        0.26
+      );
+      tl.to(
+        p2,
+        {
+          opacity: 0,
+          y: -30,
+          duration: 0.15,
+          ease: "power2.in",
+          pointerEvents: "none",
+        },
+        0.62
+      );
+
+      // 4.4 Fase 3: Entrada no gramado com convite e botões de ação aos 68% até o fim
+      gsap.set(p3, { opacity: 0, y: 35, pointerEvents: "none" });
+      tl.to(
+        p3,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.15,
+          ease: "power2.out",
+          pointerEvents: "auto",
+        },
+        0.68
+      );
+    }, section);
+
+    // Recalcular posições com precisão
+    ScrollTrigger.refresh();
 
     return () => {
-      active = false;
-      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+      ctx.revert(); // Remove pins, listeners e restaura o DOM perfeitamente
     };
   }, [drawFrame]);
-
-  // Listener de Scroll para controlar o avanço do túnel
-  useEffect(() => {
-    const handleScroll = () => {
-      const section = sectionRef.current;
-      if (!section) return;
-
-      const rect = section.getBoundingClientRect();
-      const totalScrollable = rect.height - window.innerHeight;
-
-      if (totalScrollable <= 0) return;
-
-      // Progresso de 0.0 a 1.0 dentro da trilha sticky
-      const progress = Math.max(0, Math.min(1, -rect.top / totalScrollable));
-      setScrollProgress(progress);
-
-      const frame = Math.max(1, Math.min(TOTAL_FRAMES, Math.round(progress * (TOTAL_FRAMES - 1) + 1)));
-      targetFrameRef.current = frame;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <section
       ref={sectionRef}
       id="esportivo"
-      className="relative bg-[#070707] border-t border-brand-border/40 select-none min-h-[250vh] sm:min-h-[280vh]"
+      className="relative w-full bg-[#070707] border-t border-brand-border/40 select-none overflow-hidden"
     >
-      {/* 1. CONTAINER STICKY QUE PREENCHE A TELA DURANTE O SCROLL */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
-        
+      {/* 1. CONTAINER PINNED PELO SCROLLTRIGGER QUE PREENCHE A VIEWPORT */}
+      <div
+        ref={containerRef}
+        className="relative h-screen w-full overflow-hidden flex flex-col justify-center"
+      >
         {/* Canvas de Alta Resolução com Blur e Escurecimento Cinematográfico */}
         <canvas
           ref={canvasRef}
@@ -272,24 +322,21 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-[#070707] via-transparent to-[#070707]/80 pointer-events-none z-10" />
         <div
           className="absolute inset-0 pointer-events-none z-10"
-          style={{ backgroundImage: "radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.8) 100%)" }}
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at center, transparent 35%, rgba(0,0,0,0.8) 100%)",
+          }}
         />
 
         {/* Glows sutis neon que acompanham as paredes do túnel */}
         <div className="absolute top-1/2 left-0 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-blue-600/15 rounded-full blur-[110px] pointer-events-none z-10" />
         <div className="absolute top-1/2 right-0 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-red-600/15 rounded-full blur-[110px] pointer-events-none z-10" />
 
-        {/* NARRATIVAS FLUTUANTES SINCRONIZADAS AO SCROLL */}
-        <div className="relative z-20 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pointer-events-none">
+        {/* NARRATIVAS FLUTUANTES SINCRONIZADAS VIA GSAP SCROLLTRIGGER */}
+        <div className="relative z-20 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
           
-          {/* FASE 1: ENTRADA DO TÚNEL (0.00 a 0.28) */}
-          <div
-            className={`transition-all duration-700 max-w-2xl ${
-              scrollProgress < 0.28
-                ? "opacity-100 translate-y-0 pointer-events-auto"
-                : "opacity-0 -translate-y-8 pointer-events-none absolute"
-            }`}
-          >
+          {/* FASE 1: ENTRADA DO TÚNEL */}
+          <div ref={phase1Ref} className="max-w-2xl">
             <div className="inline-flex items-center gap-2 mb-3">
               <span className="w-6 h-[1px] bg-brand-silver"></span>
               <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-silver">
@@ -301,21 +348,18 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
               A Paixão Pelo Esporte Também Faz Parte do Seu Estilo.
             </h2>
 
-            <p className="text-brand-offwhite text-sm sm:text-base lg:text-lg max-w-xl leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] mb-6 text-pretty">
+            <p className="text-brand-offwhite text-sm sm:text-base lg:text-lg max-w-xl leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)] text-pretty">
               Caminhe pelo túnel dos maiores campeões europeus. Do Santiago Bernabéu ao Camp Nou, o corte esportivo ganha atitude streetwear autêntica na Black Store.
             </p>
           </div>
 
-          {/* FASE 2: OS MANTOS SAGRADOS (0.28 a 0.68) - CARDS LATERAIS COINCIDINDO COM AS PAREDES */}
+          {/* FASE 2: OS MANTOS SAGRADOS (CARDS LATERAIS) */}
           <div
-            className={`transition-all duration-700 w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-center ${
-              scrollProgress >= 0.28 && scrollProgress < 0.68
-                ? "opacity-100 translate-y-0 pointer-events-auto"
-                : "opacity-0 translate-y-8 pointer-events-none absolute"
-            }`}
+            ref={phase2Ref}
+            className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 items-center absolute inset-x-4 sm:inset-x-6 lg:inset-x-8 max-w-7xl mx-auto"
           >
             {/* Card Real Madrid (Lado Esquerdo do Túnel) */}
-            <div className="bg-brand-black/80 border border-blue-500/30 backdrop-blur-xl p-5 sm:p-6 rounded-lg shadow-2xl flex items-center gap-4 group hover:border-blue-400 transition-all">
+            <div className="bg-brand-black/85 border border-blue-500/30 backdrop-blur-xl p-5 sm:p-6 rounded-lg shadow-2xl flex items-center gap-4 group hover:border-blue-400 transition-all">
               <div className="relative w-20 h-24 sm:w-24 sm:h-28 shrink-0 overflow-hidden rounded bg-brand-surface border border-white/10">
                 <Image
                   src="/catalog/futebol/real.webp"
@@ -347,7 +391,7 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
             </div>
 
             {/* Card Barcelona (Lado Direito do Túnel) */}
-            <div className="bg-brand-black/80 border border-red-500/30 backdrop-blur-xl p-5 sm:p-6 rounded-lg shadow-2xl flex items-center gap-4 group hover:border-red-400 transition-all">
+            <div className="bg-brand-black/85 border border-red-500/30 backdrop-blur-xl p-5 sm:p-6 rounded-lg shadow-2xl flex items-center gap-4 group hover:border-red-400 transition-all">
               <div className="relative w-20 h-24 sm:w-24 sm:h-28 shrink-0 overflow-hidden rounded bg-brand-surface border border-white/10">
                 <Image
                   src="/catalog/futebol/barcelona.webp"
@@ -379,14 +423,8 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
             </div>
           </div>
 
-          {/* FASE 3: ENTRADA NO GRAMADO & CONVITE DE COMPRA (0.68 a 1.00) */}
-          <div
-            className={`transition-all duration-700 max-w-2xl ${
-              scrollProgress >= 0.68
-                ? "opacity-100 translate-y-0 pointer-events-auto"
-                : "opacity-0 translate-y-8 pointer-events-none absolute"
-            }`}
-          >
+          {/* FASE 3: ENTRADA NO GRAMADO & CONVITE DE COMPRA */}
+          <div ref={phase3Ref} className="max-w-2xl absolute">
             <div className="inline-flex items-center gap-2 mb-3">
               <span className="w-6 h-[1px] bg-emerald-400"></span>
               <span className="text-xs font-semibold uppercase tracking-[0.25em] text-emerald-400 font-mono">
@@ -410,7 +448,7 @@ export function SportsEditorial({ onSelectCategory }: SportsEditorialProps) {
               </div>
               <div className="flex items-center gap-2 text-xs text-brand-offwhite">
                 <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Tecidos Tecnológicos Respiráveis</span>
+                <span>Tecidos Respiráveis</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-brand-offwhite">
                 <Check className="w-4 h-4 text-emerald-400 shrink-0" />
